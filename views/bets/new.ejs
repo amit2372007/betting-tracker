@@ -1,0 +1,176 @@
+<!-- Add New Bet Form -->
+
+<div class="max-w-3xl mx-auto">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 md:p-8">
+
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center">
+        <span class="text-xl">➕</span>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-white">Add New Bet</h2>
+        <p class="text-sm text-gray-400">Record a new betting entry</p>
+      </div>
+    </div>
+
+    <!-- Error Messages -->
+    <% if (errors.length > 0) { %>
+      <div class="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
+        <p class="text-red-400 font-medium text-sm mb-2">⚠️ Please fix the following errors:</p>
+        <ul class="space-y-1">
+          <% errors.forEach(err => { %>
+            <li class="text-red-300 text-sm">• <%= err.msg %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/bets" class="space-y-6">
+
+      <!-- Row 1: Date & Bet Type -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">📅 Date <span class="text-red-400">*</span></label>
+          <input type="date" name="date" value="<%= bet.date ? new Date(bet.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">🎯 Bet Type <span class="text-red-400">*</span></label>
+          <select name="betType" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required>
+            <option value="">Select bet type...</option>
+            <% ['Sports','Casino','Poker','Horse Racing','Football','Basketball','Tennis','Cricket','Boxing','UFC/MMA','eSports','Other'].forEach(type => { %>
+              <option value="<%= type %>" <%= bet.betType === type ? 'selected' : '' %>><%= type %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 2: Event & Selection -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">🏟️ Event <span class="text-red-400">*</span></label>
+          <input type="text" name="event" value="<%= bet.event || '' %>" placeholder="e.g., CSK vs MI, Euro 2024 Final..."
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500" required />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">🎯 Your Selection</label>
+          <input type="text" name="selection" value="<%= bet.selection || '' %>" placeholder="e.g., CSK to win, Over 6.5 goals..."
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500" />
+        </div>
+      </div>
+
+      <!-- Row 3: Platform, Odds, Stake -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">🏣 Platform <span class="text-red-400">*</span></label>
+          <select name="platform" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required>
+            <option value="">Select platform...</option>
+            <% ['Betway','Bet365','Dream11','MPL','My11Circle','FanCode','Parimatch','RummyCircle','Other'].forEach(p => { %>
+              <option value="<%= p %>" <%= bet.platform === p ? 'selected' : '' %>><%= p %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">📊 Odds <span class="text-red-400">*</span></label>
+          <input type="number" name="odds" value="<%= bet.odds || '' %>" placeholder="e.g., 1.85" step="0.01" min="1"
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500" required />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">💰 Stake (₹) <span class="text-red-400">*</span></label>
+          <input type="number" name="stake" id="stakeInput" value="<%= bet.stake || '' %>" placeholder="e.g., 500" step="0.01" min="0.01"
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500" required />
+        </div>
+      </div>
+
+      <!-- Row 4: Result -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-3">🏆 Result <span class="text-red-400">*</span></label>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+          <% [
+            { value: 'Pending', emoji: '⏳', color: 'yellow' },
+            { value: 'Win', emoji: '✅', color: 'green' },
+            { value: 'Loss', emoji: '❌', color: 'red' },
+            { value: 'Half Win', emoji: '🟩', color: 'emerald' },
+            { value: 'Half Loss', emoji: '🟥', color: 'orange' },
+            { value: 'Void', emoji: '⭕', color: 'gray' },
+          ].forEach(r => { %>
+            <label class="cursor-pointer">
+              <input type="radio" name="result" value="<%= r.value %>" <%= bet.result === r.value || (!bet.result && r.value === 'Pending') ? 'checked' : '' %> class="sr-only peer" />
+              <div class="peer-checked:border-blue-500 peer-checked:bg-blue-600/20 border-2 border-gray-700 rounded-xl p-3 text-center hover:border-gray-500 transition-all duration-200">
+                <div class="text-xl mb-1"><%= r.emoji %></div>
+                <div class="text-xs font-medium text-gray-300 peer-checked:text-white"><%= r.value %></div>
+              </div>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Profit/Loss Preview -->
+      <div id="plPreview" class="hidden bg-gray-800 rounded-xl p-4">
+        <p class="text-sm text-gray-400 mb-1">Estimated P&L</p>
+        <p id="plAmount" class="text-2xl font-bold text-green-400">₹0.00</p>
+      </div>
+
+      <!-- Notes & Tags -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">📝 Notes</label>
+          <textarea name="notes" rows="3" placeholder="Add any notes about this bet..."
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500 resize-none"><%= bet.notes || '' %></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">🏷️ Tags (comma-separated)</label>
+          <input type="text" name="tags" value="<%= Array.isArray(bet.tags) ? bet.tags.join(', ') : (bet.tags || '') %>" placeholder="e.g., sure-shot, tip, season-bet..."
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500" />
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="flex gap-3 pt-4 border-t border-gray-800">
+        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50">
+          Record Bet 🎲
+        </button>
+        <a href="/bets" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-xl transition-colors">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Live P&L calculator
+  const stakeInput = document.getElementById('stakeInput');
+  const oddsInput = document.querySelector('input[name="odds"]');
+  const resultRadios = document.querySelectorAll('input[name="result"]');
+  const plPreview = document.getElementById('plPreview');
+  const plAmount = document.getElementById('plAmount');
+
+  function updatePL() {
+    const stake = parseFloat(stakeInput.value) || 0;
+    const odds = parseFloat(oddsInput.value) || 0;
+    const result = document.querySelector('input[name="result"]:checked')?.value;
+
+    if (stake > 0 && odds > 0 && result) {
+      let pl = 0;
+      if (result === 'Win') pl = stake * (odds - 1);
+      else if (result === 'Loss') pl = -stake;
+      else if (result === 'Half Win') pl = (stake * (odds - 1)) / 2;
+      else if (result === 'Half Loss') pl = -stake / 2;
+
+      plPreview.classList.remove('hidden');
+      plAmount.textContent = (pl >= 0 ? '+' : '') + '₹' + pl.toFixed(2);
+      plAmount.className = `text-2xl font-bold ${pl >= 0 ? 'text-green-400' : 'text-red-400'}`;
+    } else {
+      plPreview.classList.add('hidden');
+    }
+  }
+
+  stakeInput.addEventListener('input', updatePL);
+  oddsInput.addEventListener('input', updatePL);
+  resultRadios.forEach(r => r.addEventListener('change', updatePL));
+</script>

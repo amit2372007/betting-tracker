@@ -1,0 +1,345 @@
+<!-- Dashboard View -->
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+  <!-- Total Bets -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-blue-500/50 transition-all duration-300 group">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-2xl">🎯</span>
+      <span class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">Total</span>
+    </div>
+    <div class="text-3xl font-bold text-white mb-1"><%= stats.totalBets %></div>
+    <div class="text-sm text-gray-400">Total Bets</div>
+    <div class="text-xs text-gray-500 mt-1">
+      <span class="text-green-400"><%= stats.wins %> W</span> /
+      <span class="text-red-400"><%= stats.losses %> L</span> /
+      <span class="text-yellow-400"><%= stats.pending %> Pending</span>
+    </div>
+  </div>
+
+  <!-- Win Rate -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-green-500/50 transition-all duration-300">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-2xl">🏆</span>
+      <span class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">Ratio</span>
+    </div>
+    <div class="text-3xl font-bold <%= parseFloat(stats.winRate) >= 50 ? 'text-green-400' : 'text-red-400' %> mb-1">
+      <%= stats.winRate %>%
+    </div>
+    <div class="text-sm text-gray-400">Win Rate</div>
+    <div class="w-full bg-gray-800 rounded-full h-1.5 mt-2">
+      <div class="<%= parseFloat(stats.winRate) >= 50 ? 'bg-green-500' : 'bg-red-500' %> h-1.5 rounded-full transition-all duration-500"
+        style="width: <%= Math.min(stats.winRate, 100) %>%"></div>
+    </div>
+  </div>
+
+  <!-- Total P&L -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-<%= stats.totalProfitLoss >= 0 ? 'green' : 'red' %>-500/50 transition-all duration-300">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-2xl"><%= stats.totalProfitLoss >= 0 ? '📈' : '📉' %></span>
+      <span class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">P&L</span>
+    </div>
+    <div class="text-3xl font-bold <%= stats.totalProfitLoss >= 0 ? 'text-green-400' : 'text-red-400' %> mb-1">
+      ₹<%= Math.abs(stats.totalProfitLoss).toFixed(2) %>
+    </div>
+    <div class="text-sm text-gray-400">Total <%= stats.totalProfitLoss >= 0 ? 'Profit' : 'Loss' %></div>
+    <div class="text-xs text-gray-500 mt-1">Staked: ₹<%= stats.totalStaked.toFixed(2) %></div>
+  </div>
+
+  <!-- ROI -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-purple-500/50 transition-all duration-300">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-2xl">💹</span>
+      <span class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">ROI</span>
+    </div>
+    <div class="text-3xl font-bold <%= parseFloat(stats.roi) >= 0 ? 'text-green-400' : 'text-red-400' %> mb-1">
+      <%= stats.roi %>%
+    </div>
+    <div class="text-sm text-gray-400">Return on Investment</div>
+    <div class="text-xs text-gray-500 mt-1">Avg Stake: ₹<%= parseFloat(stats.averageStake).toFixed(2) %></div>
+  </div>
+</div>
+
+<!-- Secondary Stats -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <div class="text-green-400 font-bold text-xl">₹<%= stats.biggestWin.toFixed(2) %></div>
+    <div class="text-xs text-gray-400 mt-1">Biggest Win</div>
+  </div>
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <div class="text-red-400 font-bold text-xl">₹<%= Math.abs(stats.biggestLoss).toFixed(2) %></div>
+    <div class="text-xs text-gray-400 mt-1">Biggest Loss</div>
+  </div>
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <div class="text-blue-400 font-bold text-xl"><%= stats.wins %></div>
+    <div class="text-xs text-gray-400 mt-1">Total Wins</div>
+  </div>
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <div class="text-orange-400 font-bold text-xl">₹<%= stats.totalStaked.toFixed(2) %></div>
+    <div class="text-xs text-gray-400 mt-1">Total Staked</div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-8">
+  <h3 class="text-sm font-semibold text-gray-300 mb-4">🔍 Filter Dashboard</h3>
+  <form method="GET" action="/" class="grid grid-cols-2 md:grid-cols-4 gap-3" id="filterForm">
+    <div>
+      <label class="text-xs text-gray-400 mb-1 block">From Date</label>
+      <input type="date" name="startDate" value="<%= filters && filters.startDate ? filters.startDate : '' %>"
+        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors" />
+    </div>
+    <div>
+      <label class="text-xs text-gray-400 mb-1 block">To Date</label>
+      <input type="date" name="endDate" value="<%= filters && filters.endDate ? filters.endDate : '' %>"
+        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors" />
+    </div>
+    <div>
+      <label class="text-xs text-gray-400 mb-1 block">Platform</label>
+      <select name="platform" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors">
+        <option value="all">All Platforms</option>
+        <% platforms.forEach(p => { %>
+          <option value="<%= p %>" <%= filters && filters.platform === p ? 'selected' : '' %>><%= p %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div>
+      <label class="text-xs text-gray-400 mb-1 block">Bet Type</label>
+      <select name="betType" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors">
+        <option value="all">All Types</option>
+        <% betTypes.forEach(t => { %>
+          <option value="<%= t %>" <%= filters && filters.betType === t ? 'selected' : '' %>><%= t %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="col-span-2 md:col-span-4 flex gap-2">
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors">Apply Filters</button>
+      <a href="/" class="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors">Reset</a>
+    </div>
+  </form>
+</div>
+
+<!-- Charts Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+  <!-- Profit/Loss Line Chart -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 lg:col-span-2">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-semibold text-white">📈 Profit/Loss Over Time (Last 12 Months)</h3>
+      <div class="flex gap-2 text-xs">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-blue-500 rounded-full inline-block"></span> Monthly P&L</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-purple-500 rounded-full inline-block"></span> Cumulative</span>
+      </div>
+    </div>
+    <div class="h-64">
+      <canvas id="plLineChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Bet Type Pie Chart -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+    <h3 class="font-semibold text-white mb-4">🥧 Bets by Type</h3>
+    <div class="h-56">
+      <canvas id="betTypePieChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Win/Loss Distribution -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+    <h3 class="font-semibold text-white mb-4">🎯 Result Distribution</h3>
+    <div class="h-56">
+      <canvas id="resultDonutChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Platform Bar Chart -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 lg:col-span-2">
+    <h3 class="font-semibold text-white mb-4">🏣 Activity by Platform</h3>
+    <div class="h-56">
+      <canvas id="platformBarChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Bets -->
+<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="font-semibold text-white">🕐 Recent Bets</h3>
+    <a href="/bets" class="text-blue-400 hover:text-blue-300 text-sm transition-colors">View All →</a>
+  </div>
+
+  <% if (recentBets.length === 0) { %>
+    <div class="text-center py-10 text-gray-500">
+      <div class="text-4xl mb-3">🎲</div>
+      <p>No bets recorded yet.</p>
+      <a href="/bets/new" class="text-blue-400 hover:text-blue-300 text-sm mt-2 inline-block">Add your first bet →</a>
+    </div>
+  <% } else { %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-gray-400 border-b border-gray-800">
+            <th class="text-left pb-3 font-medium">Date</th>
+            <th class="text-left pb-3 font-medium">Event</th>
+            <th class="text-left pb-3 font-medium hidden md:table-cell">Type</th>
+            <th class="text-left pb-3 font-medium hidden md:table-cell">Platform</th>
+            <th class="text-right pb-3 font-medium">Stake</th>
+            <th class="text-right pb-3 font-medium">Result</th>
+            <th class="text-right pb-3 font-medium">P&L</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+          <% recentBets.forEach(bet => { %>
+            <tr class="hover:bg-gray-800/50 transition-colors">
+              <td class="py-3 text-gray-400 text-xs whitespace-nowrap"><%= moment(bet.date).format('DD MMM YY') %></td>
+              <td class="py-3 text-white font-medium">
+                <a href="/bets/<%= bet._id %>" class="hover:text-blue-400 transition-colors">
+                  <%= bet.event.length > 30 ? bet.event.substring(0, 30) + '...' : bet.event %>
+                </a>
+              </td>
+              <td class="py-3 text-gray-400 hidden md:table-cell">
+                <span class="bg-gray-800 px-2 py-1 rounded-md text-xs"><%= bet.betType %></span>
+              </td>
+              <td class="py-3 text-gray-400 hidden md:table-cell text-xs"><%= bet.platform %></td>
+              <td class="py-3 text-right text-gray-300">₹<%= bet.stake.toFixed(2) %></td>
+              <td class="py-3 text-right">
+                <span class="px-2 py-1 rounded-full text-xs font-medium
+                  <%= bet.result === 'Win' ? 'bg-green-900/50 text-green-400' :
+                     bet.result === 'Loss' ? 'bg-red-900/50 text-red-400' :
+                     bet.result === 'Pending' ? 'bg-yellow-900/50 text-yellow-400' :
+                     'bg-gray-800 text-gray-400' %>">
+                  <%= bet.result %>
+                </span>
+              </td>
+              <td class="py-3 text-right font-semibold
+                <%= bet.profitLoss >= 0 ? 'text-green-400' : 'text-red-400' %>">
+                <%= bet.profitLoss >= 0 ? '+' : '' %>₹<%= bet.profitLoss.toFixed(2) %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<!-- Chart Scripts -->
+<script>
+  const chartDefaults = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } },
+  };
+
+  // P&L Line Chart
+  const months = <%= chartData.months %>;
+  const monthlyPL = <%= chartData.monthlyPL %>;
+  const cumulativePL = <%= chartData.cumulativePL %>;
+
+  new Chart(document.getElementById('plLineChart'), {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Monthly P&L (₹)',
+          data: monthlyPL,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,0.1)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#3b82f6',
+          pointRadius: 4,
+        },
+        {
+          label: 'Cumulative P&L (₹)',
+          data: cumulativePL,
+          borderColor: '#a855f7',
+          backgroundColor: 'rgba(168,85,247,0.05)',
+          fill: false,
+          tension: 0.4,
+          borderDash: [5, 5],
+          pointBackgroundColor: '#a855f7',
+          pointRadius: 3,
+        },
+      ],
+    },
+    options: {
+      ...chartDefaults,
+      scales: {
+        x: { ticks: { color: '#6b7280' }, grid: { color: '#1f2937' } },
+        y: {
+          ticks: { color: '#6b7280', callback: (v) => '₹' + v },
+          grid: { color: '#1f2937' },
+        },
+      },
+    },
+  });
+
+  // Bet Type Pie Chart
+  const betTypeLabels = <%= chartData.betTypeLabels %>;
+  const betTypeCounts = <%= chartData.betTypeCounts %>;
+  const pieColors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444','#06b6d4','#f97316','#84cc16','#6366f1'];
+
+  new Chart(document.getElementById('betTypePieChart'), {
+    type: 'doughnut',
+    data: {
+      labels: betTypeLabels,
+      datasets: [{
+        data: betTypeCounts,
+        backgroundColor: pieColors.slice(0, betTypeLabels.length),
+        borderColor: '#111827',
+        borderWidth: 2,
+      }],
+    },
+    options: { ...chartDefaults, cutout: '60%' },
+  });
+
+  // Result Donut Chart
+  const resultLabels = <%= chartData.resultLabels %>;
+  const resultCounts = <%= chartData.resultCounts %>;
+  const resultColors = resultLabels.map(l =>
+    l === 'Win' ? '#16a34a' : l === 'Loss' ? '#dc2626' : l === 'Void' ? '#6b7280' : l === 'Pending' ? '#d97706' : '#9333ea'
+  );
+
+  new Chart(document.getElementById('resultDonutChart'), {
+    type: 'doughnut',
+    data: {
+      labels: resultLabels,
+      datasets: [{
+        data: resultCounts,
+        backgroundColor: resultColors,
+        borderColor: '#111827',
+        borderWidth: 2,
+      }],
+    },
+    options: { ...chartDefaults, cutout: '60%' },
+  });
+
+  // Platform Bar Chart
+  const platformLabels = <%= chartData.platformLabels %>;
+  const platformCounts = <%= chartData.platformCounts %>;
+
+  new Chart(document.getElementById('platformBarChart'), {
+    type: 'bar',
+    data: {
+      labels: platformLabels,
+      datasets: [{
+        label: 'Number of Bets',
+        data: platformCounts,
+        backgroundColor: 'rgba(59,130,246,0.7)',
+        borderColor: '#3b82f6',
+        borderWidth: 1,
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      ...chartDefaults,
+      scales: {
+        x: { ticks: { color: '#6b7280' }, grid: { color: 'transparent' } },
+        y: { ticks: { color: '#6b7280', stepSize: 1 }, grid: { color: '#1f2937' } },
+      },
+    },
+  });
+</script>

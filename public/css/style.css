@@ -1,0 +1,119 @@
+/* BetTracker Pro - Custom Styles */
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Custom focus ring */
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Table row hover */
+tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Sidebar link active indicator */
+.sidebar-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #3b82f6;
+  border-radius: 0 3px 3px 0;
+}
+
+/* Gradient cards */
+.stat-card-profit {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.1), rgba(22, 163, 74, 0.03));
+  border-color: rgba(22, 163, 74, 0.3);
+}
+
+.stat-card-loss {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.03));
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* Radio button cards pulse on selection */
+input[type="radio"]:checked + div {
+  animation: pulse-border 0.3s ease;
+}
+
+@keyframes pulse-border {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* Chart containers */
+canvas {
+  max-height: 100%;
+}
+
+/* Form input date icon color fix for dark mode */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+/* Loading animation */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Responsive table container */
+.table-container {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Number animation */
+.number-count {
+  transition: all 0.5s ease;
+}
+
+/* Flash message transitions */
+#flash-success,
+#flash-error {
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Print styles */
+@media print {
+  .sidebar, header, footer { display: none !important; }
+  .lg\\:ml-64 { margin-left: 0 !important; }
+  body { background: white; color: black; }
+}

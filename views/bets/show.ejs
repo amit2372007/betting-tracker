@@ -1,0 +1,104 @@
+<!-- Bet Detail View -->
+
+<div class="max-w-3xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <a href="/bets" class="text-gray-400 hover:text-white text-sm transition-colors">← Back to Bets</a>
+      <h2 class="text-2xl font-bold text-white mt-2"><%= bet.event %></h2>
+      <% if (bet.selection) { %>
+        <p class="text-gray-400 mt-1">Selection: <%= bet.selection %></p>
+      <% } %>
+    </div>
+    <div class="flex gap-2">
+      <a href="/bets/<%= bet._id %>/edit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">✏️ Edit</a>
+      <form method="POST" action="/bets/<%= bet._id %>?_method=DELETE" onsubmit="return confirm('Delete this bet?')">
+        <button type="submit" class="bg-red-900/50 hover:bg-red-900 border border-red-700 text-red-400 px-4 py-2 rounded-lg text-sm font-medium transition-colors">🗑 Delete</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden mb-6">
+
+    <!-- P&L Banner -->
+    <div class="<%= bet.profitLoss >= 0 ? 'bg-gradient-to-r from-green-900/50 to-green-800/20 border-b border-green-800/50' : 'bg-gradient-to-r from-red-900/50 to-red-800/20 border-b border-red-800/50' %> p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-400 mb-1">Profit / Loss</p>
+          <p class="text-4xl font-bold <%= bet.profitLoss >= 0 ? 'text-green-400' : 'text-red-400' %>">
+            <%= bet.profitLoss >= 0 ? '+' : '' %>₹<%= bet.profitLoss.toFixed(2) %>
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="text-5xl"><%= bet.result === 'Win' ? '🏆' : bet.result === 'Loss' ? '💔' : bet.result === 'Pending' ? '⏳' : '⭕' %></span>
+          <p class="text-sm font-semibold mt-1
+            <%= bet.result === 'Win' ? 'text-green-400' :
+               bet.result === 'Loss' ? 'text-red-400' :
+               bet.result === 'Pending' ? 'text-yellow-400' : 'text-gray-400' %>">
+            <%= bet.result %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="p-6 grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div>
+        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Date</p>
+        <p class="font-medium text-white"><%= moment(bet.date).format('DD MMMM YYYY') %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Bet Type</p>
+        <p class="font-medium text-white"><%= bet.betType %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Platform</p>
+        <p class="font-medium text-white"><%= bet.platform %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Stake</p>
+        <p class="font-medium text-white">₹<%= bet.stake.toFixed(2) %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Odds</p>
+        <p class="font-medium text-white"><%= bet.odds.toFixed(2) %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Potential Return</p>
+        <p class="font-medium text-white">₹<%= (bet.stake * bet.odds).toFixed(2) %></p>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <% if (bet.notes) { %>
+      <div class="px-6 pb-6">
+        <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Notes</p>
+        <div class="bg-gray-800 rounded-xl p-4 text-gray-300 text-sm"><%= bet.notes %></div>
+      </div>
+    <% } %>
+
+    <!-- Tags -->
+    <% if (bet.tags && bet.tags.length > 0) { %>
+      <div class="px-6 pb-6">
+        <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Tags</p>
+        <div class="flex gap-2 flex-wrap">
+          <% bet.tags.forEach(tag => { %>
+            <span class="bg-blue-900/40 text-blue-300 text-xs px-3 py-1 rounded-full border border-blue-800/50">#<%= tag %></span>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Timestamps -->
+    <div class="px-6 pb-4 pt-2 border-t border-gray-800">
+      <p class="text-xs text-gray-500">
+        Added: <%= moment(bet.createdAt).format('DD MMM YYYY, HH:mm') %>
+        <% if (bet.updatedAt && bet.updatedAt !== bet.createdAt) { %>
+          • Updated: <%= moment(bet.updatedAt).format('DD MMM YYYY, HH:mm') %>
+        <% } %>
+      </p>
+    </div>
+  </div>
+</div>

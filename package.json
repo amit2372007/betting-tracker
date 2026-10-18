@@ -1,0 +1,33 @@
+{
+  "name": "betting-tracker",
+  "version": "1.0.0",
+  "description": "A comprehensive gambling and betting records tracker with analytics",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "ejs": "^3.1.9",
+    "express-ejs-layouts": "^2.5.1",
+    "dotenv": "^16.3.1",
+    "express-validator": "^7.0.1",
+    "method-override": "^3.0.0",
+    "express-session": "^1.17.3",
+    "connect-flash": "^0.1.1",
+    "morgan": "^1.10.0",
+    "moment": "^2.29.4",
+    "json2csv": "^6.0.0-alpha.2",
+    "pdfkit": "^0.14.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["betting", "gambling", "tracker", "finance", "mongodb"],
+  "author": "Betting Tracker App",
+  "license": "MIT"
+}
