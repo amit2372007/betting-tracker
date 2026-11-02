@@ -6,6 +6,31 @@
 const Bet = require('../models/Bet');
 const moment = require('moment');
 
+// Get weekly progress data
+const getWeeklyData = async () => {
+  const weeklyData = [];
+  for (let week = 11; week >= 0; week--) {
+    const weekStart = moment().subtract(week, 'weeks').startOf('week').toDate();
+    const weekEnd = moment().subtract(week, 'weeks').endOf('week').toDate();
+
+    const weekBets = await Bet.find({
+      date: { $gte: weekStart, $lte: weekEnd },
+    });
+
+    const weekPL = weekBets.reduce((sum, bet) => sum + bet.profitLoss, 0);
+    const wins = weekBets.filter(b => b.result === 'Win').length;
+    const winRate = weekBets.length > 0 ? (wins / weekBets.length) * 100 : 0;
+
+    weeklyData.push({
+      week: moment(weekStart).format('MMM DD'),
+      profitLoss: weekPL,
+      betCount: weekBets.length,
+      winRate: winRate.toFixed(1),
+    });
+  }
+  return weeklyData;
+};
+
 // @desc    Get dashboard with statistics
 // @route   GET /
 const getDashboard = async (req, res) => {
@@ -117,6 +142,9 @@ const getDashboard = async (req, res) => {
     const platforms = await Bet.distinct('platform');
     const betTypes = await Bet.distinct('betType');
 
+    // Get weekly data
+    const weeklyData = await getWeeklyData();
+
     res.render('dashboard', {
       title: 'Dashboard',
       stats,
@@ -136,6 +164,7 @@ const getDashboard = async (req, res) => {
       filters: { startDate, endDate, platform, betType },
       platforms,
       betTypes,
+      weeklyData: JSON.stringify(weeklyData),
       moment,
     });
   } catch (error) {
@@ -144,4 +173,4 @@ const getDashboard = async (req, res) => {
   }
 };
 
-module.exports = { getDashboard };
+module.exports = { getDashboard, getWeeklyData };

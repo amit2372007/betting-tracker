@@ -117,3 +117,121 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .lg\\:ml-64 { margin-left: 0 !important; }
   body { background: white; color: black; }
 }
+
+/* ===== RESPONSIVE DESIGN ENHANCEMENTS ===== */
+
+/* Mobile optimizations (320px - 767px) */
+@media (max-width: 767px) {
+  /* Ensure touch targets are min 44px */
+  button, a.button, .sidebar-link {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Stack forms vertically */
+  form input, form select, form textarea {
+    width: 100% !important;
+  }
+
+  /* Smaller text on mobile */
+  h1 { font-size: 2rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  
+  /* Better table scrolling */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 600px;
+  }
+
+  /* First column sticky on mobile tables */
+  table tbody tr td:first-child {
+    position: sticky;
+    left: 0;
+    background: inherit;
+    z-index: 1;
+  }
+
+  /* Charts smaller on mobile */
+  canvas {
+    max-height: 200px !important;
+  }
+
+  /* Reduce padding on cards */
+  .rounded-2xl, .rounded-3xl {
+    padding: 1rem !important;
+  }
+}
+
+/* Tablet optimizations (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Sidebar toggle available but collapsed by default */
+  aside {
+    width: 200px;
+  }
+
+  /* Two-column layouts */
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  canvas {
+    max-height: 280px;
+  }
+}
+
+/* Desktop optimizations (1024px+) */
+@media (min-width: 1024px) {
+  /* Full sidebar always visible */
+  aside {
+    transform: translateX(0) !important;
+  }
+
+  /* Larger charts */
+  canvas {
+    max-height: 320px;
+  }
+
+  /* Multi-column layouts */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+/* Print styles */
+@media print {
+  .sidebar, header, footer, button, .no-print {
+    display: none !important;
+  }
+
+  .lg\\:ml-64 {
+    margin-left: 0 !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .bg-gray-900, .bg-gray-950 {
+    background: white !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* Better focus indicators for accessibility */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}

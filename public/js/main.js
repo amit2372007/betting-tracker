@@ -113,3 +113,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('🎲 BetTracker Pro initialized');
 });
+
+// ── Responsive enhancements ────────────────────────────────────────────
+
+// Close sidebar on route change (mobile)
+window.addEventListener('popstate', () => {
+  if (window.innerWidth < 1024) {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    if (sidebar) sidebar.classList.add('-translate-x-full');
+    if (overlay) overlay.classList.add('hidden');
+  }
+});
+
+// Resize handler for responsive adjustments
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    // Auto-close sidebar on desktop resize
+    if (window.innerWidth >= 1024) {
+      const overlay = document.getElementById('overlay');
+      if (overlay) overlay.classList.add('hidden');
+    }
+  }, 250);
+});
+
+// Touch-friendly table scrolling indicator
+document.querySelectorAll('.table-container').forEach(container => {
+  const indicator = document.createElement('div');
+  indicator.className = 'scroll-indicator';
+  indicator.textContent = '← Scroll →';
+  indicator.style.cssText = 'position:absolute;top:10px;right:10px;background:rgba(59,130,246,0.9);color:white;padding:4px 12px;border-radius:6px;font-size:11px;pointer-events:none;opacity:0;transition:opacity 0.3s;';
+  
+  container.style.position = 'relative';
+  container.appendChild(indicator);
+
+  // Show indicator if table is scrollable
+  if (container.scrollWidth > container.clientWidth) {
+    indicator.style.opacity = '1';
+    setTimeout(() => indicator.style.opacity = '0', 3000);
+  }
+
+  container.addEventListener('scroll', () => {
+    indicator.style.opacity = '0';
+  });
+});

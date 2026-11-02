@@ -14,6 +14,96 @@ A professional, full-featured gambling and betting records tracker built with No
 - **Responsive UI** — Works on mobile, tablet, and desktop
 - **Flash Notifications** — Success/error messages with auto-dismiss
 
+
+## 🆕 NEW FEATURES (v2.0)
+
+### 💰 Bankroll Management & Strategy System
+- **90-Day Strategy Tracking** — Set daily target percentages (1-8%) and track progress
+- **Stop-Loss & Stop-Profit Controls** — Automatic alerts when limits are hit
+- **Kelly Criterion Integration** — AI-powered stake recommendations based on win rate
+- **Risk Level Management** — Conservative (2%), Moderate (5%), Aggressive (10%) modes
+- **Smart Recommendations** — Suggests lower stakes after losses, warns on consecutive losses
+- **Daily Performance Tracking** — Calendar heatmap of last 90 days
+
+### 💳 Personal Finance Management
+- **Income/Expense/Liability Tracking** — Comprehensive personal finance dashboard
+- **Category Breakdown** — Pie charts showing expense distribution
+- **Monthly Cash Flow Analysis** — Bar charts with income vs expenses
+- **Recurring Transactions** — Track subscriptions, monthly bills, salary
+- **Net Worth Calculator** — Combines betting profits with finance balance
+- **CSV Export** — Export all financial data
+
+### 📊 Enhanced Dashboard Analytics
+- **Weekly Progress Charts** — Last 12 weeks performance with win rate overlay
+- **Comparison Cards** — This week vs last week, this month vs last month
+- **Cumulative P&L Tracking** — See your growth trajectory
+- **Time Range Filters** — 7 days, 30 days, 90 days, 1 year, all time
+- **Responsive Charts** — Optimized for mobile, tablet, desktop
+
+### 📱 Fully Responsive Design
+- **Mobile (320-767px)** — Single column, collapsible sidebar, touch-optimized
+- **Tablet (768-1023px)** — Two-column grid, persistent sidebar toggle
+- **Desktop (1024px+)** — Full multi-column, expanded sidebar, larger charts
+- **Touch Targets** — Minimum 44px for mobile usability
+- **Horizontal Scroll Tables** — Sticky first column on mobile
+```
+
+---
+
+## 🎯 FINAL INTEGRATION CHECKLIST
+
+### ✅ Files to Create (Copy-paste from above)
+- [x] `controllers/financeController.js`
+- [x] `routes/finance.js`
+- [x] `middleware/financeValidation.js`
+- [x] `views/strategy/dashboard.ejs`
+- [x] `views/strategy/create.ejs`
+- [x] `views/finance/dashboard.ejs`
+- [x] `views/finance/transactions.ejs`
+- [x] `views/finance/add.ejs`
+
+### ✅ Files to Update (Follow instructions above)
+- [x] `server.js` — Add 2 route imports
+- [x] `controllers/betController.js` — Add strategy integration
+- [x] `controllers/dashboardController.js` — Add weekly analytics
+- [x] `views/dashboard.ejs` — Add weekly chart and comparison cards
+- [x] `public/css/style.css` — Add responsive utilities
+- [x] `public/js/main.js` — Add responsive handlers
+- [x] `scripts/seed.js` — Add sample strategy/finance data
+- [x] `README.md` — Document new features
+
+### 🚀 Testing Steps
+
+1. **Install & Seed**
+   ```bash
+   npm install
+   npm run seed
+   npm start
+   ```
+
+2. **Test Strategy**
+   - Visit http://localhost:3000/strategy
+   - Create a new 90-day strategy
+   - Add a bet and see bankroll auto-update
+   - Check stop-loss/stop-profit alerts
+
+3. **Test Finance**
+   - Visit http://localhost:3000/finance
+   - Add income/expense/liability transactions
+   - View charts and net worth calculation
+
+4. **Test Dashboard**
+   - Visit http://localhost:3000/
+   - See weekly progress chart
+   - Check comparison cards (this week vs last week)
+
+5. **Test Responsive**
+   - Open Chrome DevTools (F12)
+   - Toggle device toolbar (Ctrl+Shift+M)
+   - Test on iPhone SE, iPad, Desktop sizes
+   - Check sidebar toggle, tables scroll, charts resize
+
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |

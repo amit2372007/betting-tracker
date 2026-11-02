@@ -37,25 +37,81 @@ const sampleBets = [
   { date: new Date('2024-10-18'), betType: 'Football', event: 'Liverpool vs Tottenham', selection: 'Liverpool', platform: 'Bet365', odds: 1.65, stake: 1000, result: 'Pending', notes: 'Current form favors Liverpool' },
 ];
 
+const sampleStrategy = {
+  initialBankroll: 10000,
+  currentBankroll: 12450,
+  dailyTargetPercentage: 3,
+  stopLossPercentage: 5,
+  stopProfitPercentage: 3,
+  riskLevel: 'Moderate',
+  strategyStartDate: new Date('2024-08-01'),
+  isActive: true,
+  dailyRecords: [
+    { date: new Date('2024-10-15'), profitLoss: 300, bankrollSnapshot: 12150, stopTriggered: 'none', betCount: 5, consecutiveLosses: 0 },
+    { date: new Date('2024-10-16'), profitLoss: -150, bankrollSnapshot: 12000, stopTriggered: 'none', betCount: 3, consecutiveLosses: 1 },
+    { date: new Date('2024-10-17'), profitLoss: 450, bankrollSnapshot: 12450, stopTriggered: 'stop-profit', betCount: 4, consecutiveLosses: 0 },
+  ],
+  consecutiveLosses: 0,
+};
+
+const sampleTransactions = [
+  { type: 'income', category: 'Salary', amount: 50000, description: 'Monthly salary', date: new Date('2024-10-01'), recurringType: 'Monthly' },
+  { type: 'income', category: 'Freelance', amount: 15000, description: 'Web design project', date: new Date('2024-10-05'), recurringType: 'One-time' },
+  { type: 'expense', category: 'Rent', amount: 12000, description: 'Monthly rent payment', date: new Date('2024-10-01'), recurringType: 'Monthly' },
+  { type: 'expense', category: 'Groceries', amount: 3500, description: 'Weekly groceries', date: new Date('2024-10-07'), recurringType: 'Weekly' },
+  { type: 'expense', category: 'Food & Dining', amount: 2200, description: 'Restaurants and cafes', date: new Date('2024-10-10'), recurringType: 'One-time' },
+  { type: 'expense', category: 'Transportation', amount: 1500, description: 'Fuel and maintenance', date: new Date('2024-10-12'), recurringType: 'Monthly' },
+  { type: 'expense', category: 'Utilities', amount: 2800, description: 'Electricity and internet', date: new Date('2024-10-05'), recurringType: 'Monthly' },
+  { type: 'expense', category: 'Entertainment', amount: 1200, description: 'Movies and streaming', date: new Date('2024-10-14'), recurringType: 'One-time' },
+  { type: 'liability', category: 'Credit Card Bill', amount: 8500, description: 'Last month balance', date: new Date('2024-10-03'), recurringType: 'Monthly' },
+  { type: 'liability', category: 'Loan Payment', amount: 5000, description: 'Personal loan EMI', date: new Date('2024-10-05'), recurringType: 'Monthly' },
+];
+
+/**
+ * Main seeding function
+ * Clears and repopulates database with sample data
+ */
 const seedDB = async () => {
   try {
     await connectDB();
+
+    // Load models after DB connection
+    const Strategy = require('../models/Strategy');
+    const Transaction = require('../models/Transaction');
 
     // Clear existing data
     await Bet.deleteMany({});
     console.log('🗑️  Cleared existing bets');
 
-    // Insert sample data
+    // Insert sample bets
     await Bet.insertMany(sampleBets);
     console.log(`✅ Inserted ${sampleBets.length} sample bets`);
 
-    // Calculate stats
+    // Calculate bet stats
     const stats = await Bet.getStats();
-    console.log('\n📊 Sample Data Stats:');
+    console.log('\n📊 Sample Betting Stats:');
     console.log(`   Total Bets: ${stats.totalBets}`);
     console.log(`   Win Rate:   ${stats.winRate}%`);
     console.log(`   Total P&L:  ₹${stats.totalProfitLoss.toFixed(2)}`);
     console.log(`   ROI:        ${stats.roi}%`);
+
+    // Clear and seed strategy
+    await Strategy.deleteMany({});
+    await Strategy.create(sampleStrategy);
+    console.log('\n✅ Created sample strategy');
+
+    // Clear and seed transactions
+    await Transaction.deleteMany({});
+    await Transaction.insertMany(sampleTransactions);
+    console.log(`✅ Inserted ${sampleTransactions.length} sample transactions`);
+
+    // Calculate finance stats
+    const financeSummary = await Transaction.getFinanceSummary();
+    console.log('\n💰 Sample Finance Stats:');
+    console.log(`   Income:      ₹${financeSummary.totalIncome.toFixed(2)}`);
+    console.log(`   Expenses:    ₹${financeSummary.totalExpenses.toFixed(2)}`);
+    console.log(`   Liabilities: ₹${financeSummary.totalLiabilities.toFixed(2)}`);
+    console.log(`   Net Balance: ₹${financeSummary.netBalance.toFixed(2)}`);
 
     console.log('\n🎲 Database seeded successfully!');
     process.exit(0);

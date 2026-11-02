@@ -8,6 +8,8 @@ const { validationResult } = require('express-validator');
 const moment = require('moment');
 const { Parser } = require('json2csv');
 const PDFDocument = require('pdfkit');
+const Strategy = require('../models/Strategy');
+const { updateDailyBankroll } = require('./strategyController');
 
 // @desc    Get all bets with filtering/pagination
 // @route   GET /bets
@@ -120,7 +122,12 @@ const createBet = async (req, res) => {
       tags: req.body.tags ? req.body.tags.split(',').map((t) => t.trim()) : [],
     };
 
-    await Bet.create(betData);
+    const newBet = await Bet.create(betData);
+
+    const activeStrategy = await Strategy.getActiveStrategy();
+if (activeStrategy) {
+  await updateDailyBankroll(activeStrategy, newBet.profitLoss);
+}
 
     req.flash('success', '✅ Bet added successfully!');
     res.redirect('/bets');
@@ -211,6 +218,7 @@ const updateBet = async (req, res) => {
       tags: req.body.tags ? req.body.tags.split(',').map((t) => t.trim()) : [],
     };
 
+
     // Calculate profit/loss based on result
     if (betData.result === 'Win') {
       betData.profitLoss = betData.stake * (betData.odds - 1);
@@ -224,8 +232,18 @@ const updateBet = async (req, res) => {
       betData.profitLoss = 0;
     }
 
+    const oldBet = await Bet.findById(req.params.id);
+const oldPL = oldBet ? oldBet.profitLoss : 0;
+
     await Bet.findByIdAndUpdate(req.params.id, betData, { runValidators: true });
 
+
+    const activeStrategy = await Strategy.getActiveStrategy();
+if (activeStrategy && oldBet) {
+  // Revert old P&L and apply new one
+  activeStrategy.currentBankroll = activeStrategy.currentBankroll - oldPL + betData.profitLoss;
+  await activeStrategy.save();
+}
     req.flash('success', '✅ Bet updated successfully!');
     res.redirect('/bets');
   } catch (error) {

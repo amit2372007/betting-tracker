@@ -13,6 +13,9 @@ const flash = require('connect-flash');
 const expressLayouts = require('express-ejs-layouts');
 const connectDB = require('./config/db');
 
+const Strategy = require('./models/Strategy');
+const Transaction = require('./models/Transaction');
+
 // Connect to database
 connectDB();
 
@@ -65,6 +68,8 @@ app.use((req, res, next) => {
 // Routes
 app.use('/', require('./routes/dashboard'));
 app.use('/bets', require('./routes/bets'));
+app.use('/strategy', require('./routes/strategy'));
+app.use('/finance', require('./routes/finance'));
 
 // 404 Handler
 app.use((req, res) => {

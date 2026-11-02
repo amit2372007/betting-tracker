@@ -1,0 +1,105 @@
+<!-- Create Strategy Form -->
+
+<div class="max-w-3xl mx-auto">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+    
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <span class="text-3xl">💰</span>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Create Your 90-Day Strategy</h2>
+      <p class="text-gray-400">Set up bankroll management with stop-loss & profit targets</p>
+    </div>
+
+    <% if (errors.length > 0) { %>
+      <div class="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
+        <p class="text-red-400 font-medium text-sm mb-2">⚠️ Please fix the following errors:</p>
+        <ul class="space-y-1">
+          <% errors.forEach(err => { %>
+            <li class="text-red-300 text-sm">• <%= err.msg %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/strategy/create" class="space-y-6">
+
+      <!-- Initial Bankroll -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">
+          💵 Initial Bankroll (₹) <span class="text-red-400">*</span>
+        </label>
+        <input type="number" name="initialBankroll" value="<%= strategy.initialBankroll || '' %>" 
+          placeholder="e.g., 10000" step="100" min="100" required
+          class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
+        <p class="text-xs text-gray-500 mt-2">Minimum ₹100 required to start</p>
+      </div>
+
+      <!-- Daily Target Percentage -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">
+          🎯 Daily Target Percentage (1-8%) <span class="text-red-400">*</span>
+        </label>
+        <input type="number" name="dailyTargetPercentage" value="<%= strategy.dailyTargetPercentage || 3 %>" 
+          placeholder="e.g., 3" step="0.5" min="1" max="8" required
+          class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
+        <p class="text-xs text-gray-500 mt-2">Target daily return as % of bankroll (3% is typical)</p>
+      </div>
+
+      <!-- Risk Level -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-3">
+          ⚖️ Risk Level <span class="text-red-400">*</span>
+        </label>
+        <div class="grid grid-cols-3 gap-3">
+          <% [
+            { value: 'Conservative', emoji: '🛡️', desc: '2% per bet' },
+            { value: 'Moderate', emoji: '⚖️', desc: '5% per bet' },
+            { value: 'Aggressive', emoji: '🚀', desc: '10% per bet' },
+          ].forEach(risk => { %>
+            <label class="cursor-pointer">
+              <input type="radio" name="riskLevel" value="<%= risk.value %>" 
+                <%= !strategy.riskLevel && risk.value === 'Moderate' ? 'checked' : '' %>
+                <%= strategy.riskLevel === risk.value ? 'checked' : '' %>
+                class="sr-only peer" required />
+              <div class="peer-checked:border-blue-500 peer-checked:bg-blue-600/20 border-2 border-gray-700 rounded-xl p-4 text-center hover:border-gray-500 transition-all">
+                <div class="text-2xl mb-2"><%= risk.emoji %></div>
+                <div class="text-sm font-semibold text-white mb-1"><%= risk.value %></div>
+                <div class="text-xs text-gray-400"><%= risk.desc %></div>
+              </div>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Stop-Loss & Stop-Profit -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">
+            🛑 Stop-Loss % <span class="text-red-400">*</span>
+          </label>
+          <input type="number" name="stopLossPercentage" value="<%= strategy.stopLossPercentage || 5 %>" 
+            placeholder="e.g., 5" step="0.5" min="1" max="20" required
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
+          <p class="text-xs text-gray-500 mt-1">Max daily loss before stopping</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">
+            🎯 Stop-Profit % <span class="text-red-400">*</span>
+          </label>
+          <input type="number" name="stopProfitPercentage" value="<%= strategy.stopProfitPercentage || 3 %>" 
+            placeholder="e.g., 3" step="0.5" min="1" max="15" required
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
+          <p class="text-xs text-gray-500 mt-1">Daily profit target to lock gains</p>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="pt-6 border-t border-gray-800">
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition-all shadow-lg shadow-blue-600/30">
+          🚀 Start 90-Day Strategy
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

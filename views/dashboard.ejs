@@ -162,6 +162,35 @@
   </div>
 </div>
 
+
+<!-- Weekly Progress Chart (NEW) -->
+<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-8">
+  <h3 class="font-semibold text-white mb-4">📅 Weekly Progress (Last 12 Weeks)</h3>
+  <div class="h-64">
+    <canvas id="weeklyProgressChart"></canvas>
+  </div>
+</div>
+
+<!-- Comparison Cards (NEW) -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <p class="text-xs text-gray-500 mb-2">This Week</p>
+    <p class="text-2xl font-bold text-blue-400" id="thisWeekPL">-</p>
+  </div>
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <p class="text-xs text-gray-500 mb-2">Last Week</p>
+    <p class="text-2xl font-bold text-gray-400" id="lastWeekPL">-</p>
+  </div>
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <p class="text-xs text-gray-500 mb-2">This Month</p>
+    <p class="text-2xl font-bold text-green-400" id="thisMonthPL">-</p>
+  </div>
+  <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+    <p class="text-xs text-gray-500 mb-2">Last Month</p>
+    <p class="text-2xl font-bold text-gray-400" id="lastMonthPL">-</p>
+  </div>
+</div>
+
 <!-- Recent Bets -->
 <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
   <div class="flex items-center justify-between mb-4">
@@ -233,9 +262,9 @@
   };
 
   // P&L Line Chart
-  const months = <%= chartData.months %>;
-  const monthlyPL = <%= chartData.monthlyPL %>;
-  const cumulativePL = <%= chartData.cumulativePL %>;
+  const months = <%- chartData.months %>;
+  const monthlyPL = <%- chartData.monthlyPL %>;
+  const cumulativePL = <%- chartData.cumulativePL %>;
 
   new Chart(document.getElementById('plLineChart'), {
     type: 'line',
@@ -278,8 +307,8 @@
   });
 
   // Bet Type Pie Chart
-  const betTypeLabels = <%= chartData.betTypeLabels %>;
-  const betTypeCounts = <%= chartData.betTypeCounts %>;
+  const betTypeLabels = <%- chartData.betTypeLabels %>;
+  const betTypeCounts = <%- chartData.betTypeCounts %>;
   const pieColors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444','#06b6d4','#f97316','#84cc16','#6366f1'];
 
   new Chart(document.getElementById('betTypePieChart'), {
@@ -297,8 +326,8 @@
   });
 
   // Result Donut Chart
-  const resultLabels = <%= chartData.resultLabels %>;
-  const resultCounts = <%= chartData.resultCounts %>;
+  const resultLabels = <%- chartData.resultLabels %>;
+  const resultCounts = <%- chartData.resultCounts %>;
   const resultColors = resultLabels.map(l =>
     l === 'Win' ? '#16a34a' : l === 'Loss' ? '#dc2626' : l === 'Void' ? '#6b7280' : l === 'Pending' ? '#d97706' : '#9333ea'
   );
@@ -318,8 +347,8 @@
   });
 
   // Platform Bar Chart
-  const platformLabels = <%= chartData.platformLabels %>;
-  const platformCounts = <%= chartData.platformCounts %>;
+  const platformLabels = <%- chartData.platformLabels %>;
+  const platformCounts = <%- chartData.platformCounts %>;
 
   new Chart(document.getElementById('platformBarChart'), {
     type: 'bar',
@@ -342,4 +371,64 @@
       },
     },
   });
+
+  // Weekly Progress Chart
+  const weeklyData = <%- typeof weeklyData !== 'undefined' ? weeklyData : '[]' %>;
+  
+  if (weeklyData.length > 0) {
+    new Chart(document.getElementById('weeklyProgressChart'), {
+      type: 'line',
+      data: {
+        labels: weeklyData.map(w => w.week),
+        datasets: [
+          {
+            label: 'Weekly P&L (₹)',
+            data: weeklyData.map(w => w.profitLoss),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.1)',
+            fill: true,
+            tension: 0.4,
+            yAxisID: 'y',
+          },
+          {
+            label: 'Win Rate (%)',
+            data: weeklyData.map(w => parseFloat(w.winRate)),
+            borderColor: '#22c55e',
+            backgroundColor: 'rgba(34,197,94,0.1)',
+            fill: false,
+            tension: 0.4,
+            yAxisID: 'y1',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } },
+        scales: {
+          x: { ticks: { color: '#6b7280' }, grid: { color: '#1f2937' } },
+          y: {
+            type: 'linear',
+            position: 'left',
+            ticks: { color: '#6b7280', callback: v => '₹' + v },
+            grid: { color: '#1f2937' },
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            ticks: { color: '#6b7280', callback: v => v + '%' },
+            grid: { display: false },
+          },
+        },
+      },
+    });
+
+    // Update comparison cards
+    document.getElementById('thisWeekPL').textContent = '₹' + weeklyData[weeklyData.length - 1].profitLoss.toFixed(0);
+    document.getElementById('lastWeekPL').textContent = '₹' + (weeklyData[weeklyData.length - 2]?.profitLoss || 0).toFixed(0);
+    
+    const monthlyPLData = <%- chartData.monthlyPL %>;
+    document.getElementById('thisMonthPL').textContent = '₹' + (parseFloat(monthlyPLData[monthlyPLData.length - 1]) || 0).toFixed(0);
+    document.getElementById('lastMonthPL').textContent = '₹' + (parseFloat(monthlyPLData[monthlyPLData.length - 2]) || 0).toFixed(0);
+  }
 </script>

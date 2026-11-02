@@ -64,35 +64,52 @@
 
     <!-- Navigation -->
     <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+      <!-- Main Menu -->
       <a href="/"
         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath === '/' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
         <span class="text-lg">📊</span>
-        Dashboard
+        <span class="truncate">Dashboard</span>
       </a>
 
       <a href="/bets"
         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath.startsWith('/bets') && currentPath !== '/bets/new' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
         <span class="text-lg">📋</span>
-        All Bets
+        <span class="truncate">All Bets</span>
       </a>
 
       <a href="/bets/new"
         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath === '/bets/new' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
         <span class="text-lg">➕</span>
-        Add New Bet
+        <span class="truncate">Add New Bet</span>
       </a>
 
+      <!-- NEW: Strategy Section -->
+      <div class="pt-4 border-t border-gray-800 mt-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wider px-4 mb-2">Management</p>
+        <a href="/strategy"
+          class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath.startsWith('/strategy') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
+          <span class="text-lg">💰</span>
+          <span class="truncate">Strategy</span>
+        </a>
+        <a href="/finance"
+          class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath.startsWith('/finance') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
+          <span class="text-lg">💳</span>
+          <span class="truncate">Finance</span>
+        </a>
+      </div>
+
+      <!-- Export -->
       <div class="pt-4 border-t border-gray-800 mt-4">
         <p class="text-xs text-gray-500 uppercase tracking-wider px-4 mb-2">Export</p>
         <a href="/bets/export/csv"
           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200">
           <span class="text-lg">📄</span>
-          Export CSV
+          <span class="truncate">Export CSV</span>
         </a>
         <a href="/bets/export/pdf"
           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200">
           <span class="text-lg">📑</span>
-          Export PDF
+          <span class="truncate">Export PDF</span>
         </a>
       </div>
     </nav>
