@@ -1,104 +1,109 @@
-<!-- Bet Detail View -->
+<%# Bet Detail — Furrow theme %>
 
-<div class="max-w-3xl mx-auto">
+<a href="/bets" class="back-link">← All bets</a>
 
-  <!-- Header -->
-  <div class="flex items-start justify-between mb-6">
+<%# Main Card %>
+<div class="card" style="max-width:900px">
+
+  <%# P&L Banner %>
+  <div class="detail-banner <%= bet.result === 'Win' ? 'detail-banner--win' : bet.result === 'Loss' ? 'detail-banner--loss' : '' %>">
     <div>
-      <a href="/bets" class="text-gray-400 hover:text-white text-sm transition-colors">← Back to Bets</a>
-      <h2 class="text-2xl font-bold text-white mt-2"><%= bet.event %></h2>
-      <% if (bet.selection) { %>
-        <p class="text-gray-400 mt-1">Selection: <%= bet.selection %></p>
-      <% } %>
+      <div class="detail-result-label">Profit / Loss</div>
+      <div class="detail-pl <%= bet.profitLoss >= 0 ? 'detail-pl--green' : 'detail-pl--red' %>">
+        <%= bet.profitLoss >= 0 ? '+' : '' %>₹<%= bet.profitLoss.toFixed(2) %>
+      </div>
     </div>
-    <div class="flex gap-2">
-      <a href="/bets/<%= bet._id %>/edit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">✏️ Edit</a>
-      <form method="POST" action="/bets/<%= bet._id %>?_method=DELETE" onsubmit="return confirm('Delete this bet?')">
-        <button type="submit" class="bg-red-900/50 hover:bg-red-900 border border-red-700 text-red-400 px-4 py-2 rounded-lg text-sm font-medium transition-colors">🗑 Delete</button>
-      </form>
+    <div>
+      <span class="result-chip result-chip--<%= bet.result.toLowerCase().replace(/ /g,'') %>" style="font-size:14px;padding:6px 14px">
+        <%= bet.result %>
+      </span>
+      <div class="detail-result-label" style="margin-top:8px;text-align:right">
+        <%= moment(bet.date).format('DD MMMM YYYY') %>
+      </div>
     </div>
   </div>
 
-  <!-- Main Card -->
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden mb-6">
-
-    <!-- P&L Banner -->
-    <div class="<%= bet.profitLoss >= 0 ? 'bg-gradient-to-r from-green-900/50 to-green-800/20 border-b border-green-800/50' : 'bg-gradient-to-r from-red-900/50 to-red-800/20 border-b border-red-800/50' %> p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-gray-400 mb-1">Profit / Loss</p>
-          <p class="text-4xl font-bold <%= bet.profitLoss >= 0 ? 'text-green-400' : 'text-red-400' %>">
-            <%= bet.profitLoss >= 0 ? '+' : '' %>₹<%= bet.profitLoss.toFixed(2) %>
-          </p>
-        </div>
-        <div class="text-right">
-          <span class="text-5xl"><%= bet.result === 'Win' ? '🏆' : bet.result === 'Loss' ? '💔' : bet.result === 'Pending' ? '⏳' : '⭕' %></span>
-          <p class="text-sm font-semibold mt-1
-            <%= bet.result === 'Win' ? 'text-green-400' :
-               bet.result === 'Loss' ? 'text-red-400' :
-               bet.result === 'Pending' ? 'text-yellow-400' : 'text-gray-400' %>">
-            <%= bet.result %>
-          </p>
-        </div>
-      </div>
+  <%# Details Grid %>
+  <div class="detail-grid">
+    <div>
+      <div class="detail-field-label">Event</div>
+      <div class="detail-field-value"><%= bet.event %></div>
     </div>
 
-    <!-- Details Grid -->
-    <div class="p-6 grid grid-cols-2 md:grid-cols-3 gap-6">
-      <div>
-        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Date</p>
-        <p class="font-medium text-white"><%= moment(bet.date).format('DD MMMM YYYY') %></p>
-      </div>
-      <div>
-        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Bet Type</p>
-        <p class="font-medium text-white"><%= bet.betType %></p>
-      </div>
-      <div>
-        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Platform</p>
-        <p class="font-medium text-white"><%= bet.platform %></p>
-      </div>
-      <div>
-        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Stake</p>
-        <p class="font-medium text-white">₹<%= bet.stake.toFixed(2) %></p>
-      </div>
-      <div>
-        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Odds</p>
-        <p class="font-medium text-white"><%= bet.odds.toFixed(2) %></p>
-      </div>
-      <div>
-        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Potential Return</p>
-        <p class="font-medium text-white">₹<%= (bet.stake * bet.odds).toFixed(2) %></p>
-      </div>
+    <% if (bet.selection) { %>
+    <div>
+      <div class="detail-field-label">Selection</div>
+      <div class="detail-field-value"><%= bet.selection %></div>
+    </div>
+    <% } %>
+
+    <div>
+      <div class="detail-field-label">Bet type</div>
+      <div class="detail-field-value"><%= bet.betType %></div>
     </div>
 
-    <!-- Notes -->
-    <% if (bet.notes) { %>
-      <div class="px-6 pb-6">
-        <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Notes</p>
-        <div class="bg-gray-800 rounded-xl p-4 text-gray-300 text-sm"><%= bet.notes %></div>
-      </div>
-    <% } %>
+    <div>
+      <div class="detail-field-label">Platform</div>
+      <div class="detail-field-value"><%= bet.platform %></div>
+    </div>
 
-    <!-- Tags -->
-    <% if (bet.tags && bet.tags.length > 0) { %>
-      <div class="px-6 pb-6">
-        <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Tags</p>
-        <div class="flex gap-2 flex-wrap">
-          <% bet.tags.forEach(tag => { %>
-            <span class="bg-blue-900/40 text-blue-300 text-xs px-3 py-1 rounded-full border border-blue-800/50">#<%= tag %></span>
-          <% }) %>
-        </div>
-      </div>
-    <% } %>
+    <div>
+      <div class="detail-field-label">Stake</div>
+      <div class="detail-field-value td-num">₹<%= bet.stake.toFixed(2) %></div>
+    </div>
 
-    <!-- Timestamps -->
-    <div class="px-6 pb-4 pt-2 border-t border-gray-800">
-      <p class="text-xs text-gray-500">
-        Added: <%= moment(bet.createdAt).format('DD MMM YYYY, HH:mm') %>
-        <% if (bet.updatedAt && bet.updatedAt !== bet.createdAt) { %>
-          • Updated: <%= moment(bet.updatedAt).format('DD MMM YYYY, HH:mm') %>
-        <% } %>
-      </p>
+    <div>
+      <div class="detail-field-label">Odds</div>
+      <div class="detail-field-value td-num"><%= bet.odds.toFixed(2) %></div>
+    </div>
+
+    <div>
+      <div class="detail-field-label">Potential return</div>
+      <div class="detail-field-value td-num">₹<%= (bet.stake * bet.odds).toFixed(2) %></div>
+    </div>
+
+    <div>
+      <div class="detail-field-label">ROI</div>
+      <div class="detail-field-value td-num <%= bet.profitLoss >= 0 ? 'td-num--green' : 'td-num--red' %>">
+        <%= ((bet.profitLoss / bet.stake) * 100).toFixed(1) %>%
+      </div>
+    </div>
+  </div>
+
+  <%# Notes %>
+  <% if (bet.notes) { %>
+    <div class="notes-block">
+      <div style="font-size:11.5px;font-weight:500;color:var(--color-muted);margin-bottom:6px">Notes</div>
+      <%= bet.notes %>
+    </div>
+  <% } %>
+
+  <%# Tags %>
+  <% if (bet.tags && bet.tags.length > 0) { %>
+    <div style="margin:0 var(--space-lg) var(--space-lg)">
+      <div style="font-size:11.5px;font-weight:500;color:var(--color-muted);margin-bottom:8px">Tags</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <% bet.tags.forEach(tag => { %>
+          <span class="tag">#<%= tag %></span>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <%# Footer with timestamps and actions %>
+  <div style="padding:var(--space-md) var(--space-lg);border-top:var(--rule-hair);display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);flex-wrap:wrap">
+    <div style="font-size:11px;color:var(--color-muted)">
+      Added: <%= moment(bet.createdAt).format('DD MMM YYYY, HH:mm') %>
+      <% if (bet.updatedAt && bet.updatedAt.toString() !== bet.createdAt.toString()) { %>
+        • Updated: <%= moment(bet.updatedAt).format('DD MMM YYYY, HH:mm') %>
+      <% } %>
+    </div>
+    <div style="display:flex;gap:var(--space-sm)">
+      <a href="/bets/<%= bet._id %>/edit" class="btn btn--sm">Edit</a>
+      <form method="POST" action="/bets/<%= bet._id %>?_method=DELETE" style="display:inline"
+        onsubmit="return confirm('Delete this bet? This action cannot be undone.')">
+        <button type="submit" class="btn btn--danger btn--sm">Delete</button>
+      </form>
     </div>
   </div>
 </div>

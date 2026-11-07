@@ -1,144 +1,158 @@
-<!-- Current Bankroll Hero Section -->
-<div class="bg-gradient-to-br from-blue-900/50 to-purple-900/30 border border-blue-800/50 rounded-3xl p-8 mb-8">
-  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-    <div class="flex-1">
-      <p class="text-sm text-gray-400 mb-2">💰 Current Bankroll</p>
-      <h1 class="text-5xl md:text-6xl font-bold text-white mb-3">₹<%= strategy.currentBankroll.toFixed(2) %></h1>
-      <div class="flex flex-wrap gap-4 text-sm">
-        <span class="<%= strategy.currentROI >= 0 ? 'text-green-400' : 'text-red-400' %>">
-          ROI: <%= strategy.currentROI >= 0 ? '+' : '' %><%= strategy.currentROI.toFixed(1) %>%
-        </span>
-        <span class="text-gray-400">Started: <%= moment(strategy.strategyStartDate).format('DD MMM YYYY') %></span>
-        <span class="text-gray-400">Day <%= strategy.daysElapsed %> of 90</span>
-      </div>
+<%# Strategy Dashboard — Furrow theme %>
+
+<%# Current Bankroll Hero Section %>
+<div class="net-worth-banner mb-6">
+  <div style="flex:1">
+    <div class="net-worth-label">Current bankroll</div>
+    <div class="net-worth-value">₹<%= strategy.currentBankroll.toFixed(2) %></div>
+    <div class="net-worth-sub">
+      <span class="<%= strategy.currentROI >= 0 ? 'td-num--green' : 'td-num--red' %>" style="font-weight:500">
+        ROI: <%= strategy.currentROI >= 0 ? '+' : '' %><%= strategy.currentROI.toFixed(1) %>%
+      </span>
+      <span style="margin:0 8px;opacity:0.5">•</span>
+      Day <%= strategy.daysElapsed %> of 90
+      <span style="margin:0 8px;opacity:0.5">•</span>
+      Started <%= moment(strategy.strategyStartDate).format('DD MMM YYYY') %>
     </div>
-    <div class="text-center bg-gray-800/50 rounded-2xl p-6 min-w-[200px]">
-      <p class="text-xs text-gray-400 mb-1">90-Day Target</p>
-      <p class="text-3xl font-bold text-blue-400">₹<%= strategy.ninetyDayTargetAmount.toFixed(0) %></p>
-      <p class="text-xs text-gray-500 mt-2"><%= strategy.daysRemaining %> days left</p>
+  </div>
+  <div class="net-worth-meta" style="min-width:200px">
+    <div class="net-worth-meta-item">
+      <div class="meta-label">90-day target</div>
+      <div class="meta-val" style="color:var(--color-accent)">₹<%= strategy.ninetyDayTargetAmount.toFixed(0) %></div>
+    </div>
+    <div class="net-worth-meta-item">
+      <div class="meta-label">Days left</div>
+      <div class="meta-val"><%= strategy.daysRemaining %></div>
     </div>
   </div>
 </div>
 
-<!-- Stop-Loss / Stop-Profit Alerts -->
+<%# Stop-Loss / Stop-Profit Alerts %>
 <% if (stopLossCheck.triggered || stopProfitCheck.triggered) { %>
   <div class="mb-6">
     <% if (stopLossCheck.triggered) { %>
-      <div class="bg-red-900/30 border-2 border-red-700 rounded-xl p-5 flex items-center gap-4 animate-pulse">
-        <span class="text-4xl">🛑</span>
+      <div class="flash flash--error" style="padding:var(--space-md) var(--space-lg);font-size:14px;margin-bottom:var(--space-sm)">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
         <div>
-          <p class="text-red-400 font-bold text-lg"><%= stopLossCheck.message %></p>
-          <p class="text-gray-400 text-sm mt-1">Loss: ₹<%= stopLossCheck.currentLoss.toFixed(2) %> / Limit: ₹<%= stopLossCheck.threshold.toFixed(2) %></p>
+          <div style="font-weight:600;margin-bottom:3px"><%= stopLossCheck.message %></div>
+          <div style="font-size:12px;opacity:0.85">Loss: ₹<%= stopLossCheck.currentLoss.toFixed(2) %> / Limit: ₹<%= stopLossCheck.threshold.toFixed(2) %></div>
         </div>
       </div>
     <% } %>
     <% if (stopProfitCheck.triggered) { %>
-      <div class="bg-green-900/30 border-2 border-green-700 rounded-xl p-5 flex items-center gap-4">
-        <span class="text-4xl">🎯</span>
+      <div class="flash flash--success" style="padding:var(--space-md) var(--space-lg);font-size:14px">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
         <div>
-          <p class="text-green-400 font-bold text-lg"><%= stopProfitCheck.message %></p>
-          <p class="text-gray-400 text-sm mt-1">Profit: ₹<%= stopProfitCheck.currentProfit.toFixed(2) %> / Target: ₹<%= stopProfitCheck.threshold.toFixed(2) %></p>
+          <div style="font-weight:600;margin-bottom:3px"><%= stopProfitCheck.message %></div>
+          <div style="font-size:12px;opacity:0.85">Profit: ₹<%= stopProfitCheck.currentProfit.toFixed(2) %> / Target: ₹<%= stopProfitCheck.threshold.toFixed(2) %></div>
         </div>
       </div>
     <% } %>
   </div>
 <% } %>
 
-<!-- Today's Performance & Recommendations -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-  
-  <!-- Today's Stats -->
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-      <span>📊</span> Today's Performance
-    </h3>
-    <div class="space-y-4">
-      <div class="flex justify-between items-center">
-        <span class="text-gray-400">Today's P&L</span>
-        <span class="text-xl font-bold <%= todayPL >= 0 ? 'text-green-400' : 'text-red-400' %>">
+<%# Today's Performance & Recommendations %>
+<div class="grid-2 mb-6">
+
+  <%# Today's Stats %>
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">Today's performance</span>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+        <span style="color:var(--color-muted);font-size:13px">Today's P&L</span>
+        <span class="<%= todayPL >= 0 ? 'td-num--green' : 'td-num--red' %>" style="font-family:var(--font-display);font-weight:600;font-size:22px">
           <%= todayPL >= 0 ? '+' : '' %>₹<%= todayPL.toFixed(2) %>
         </span>
       </div>
-      <div class="flex justify-between items-center">
-        <span class="text-gray-400">Daily Target</span>
-        <span class="text-white">₹<%= (strategy.currentBankroll * (strategy.dailyTargetPercentage / 100)).toFixed(2) %></span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="color:var(--color-muted);font-size:13px">Daily target</span>
+        <span style="font-weight:500;color:var(--color-ink)">₹<%= (strategy.currentBankroll * (strategy.dailyTargetPercentage / 100)).toFixed(2) %></span>
       </div>
-      <div class="w-full bg-gray-800 rounded-full h-3">
-        <div class="<%= todayPL >= 0 ? 'bg-green-500' : 'bg-red-500' %> h-3 rounded-full transition-all" 
-          style="width: <%= Math.min(Math.abs((todayPL / (strategy.currentBankroll * (strategy.dailyTargetPercentage / 100))) * 100), 100) %>%"></div>
+      <div class="progress-track">
+        <div class="progress-fill <%= todayPL >= 0 ? 'progress-fill--green' : 'progress-fill--red' %>"
+          style="width:<%= Math.min(Math.abs((todayPL / (strategy.currentBankroll * (strategy.dailyTargetPercentage / 100))) * 100), 100) %>%"></div>
       </div>
-      <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-800">
+      <div class="grid-2" style="gap:var(--space-sm);margin-top:var(--space-md);padding-top:var(--space-md);border-top:var(--rule-hair)">
         <div>
-          <p class="text-xs text-gray-500">Stop-Loss Limit</p>
-          <p class="text-sm font-semibold text-red-400">₹<%= (strategy.currentBankroll * (strategy.stopLossPercentage / 100)).toFixed(2) %></p>
+          <div style="font-size:11px;color:var(--color-muted);margin-bottom:3px">Stop-loss limit</div>
+          <div class="td-num td-num--red" style="font-weight:600;font-size:14px">₹<%= (strategy.currentBankroll * (strategy.stopLossPercentage / 100)).toFixed(2) %></div>
         </div>
         <div>
-          <p class="text-xs text-gray-500">Stop-Profit Target</p>
-          <p class="text-sm font-semibold text-green-400">₹<%= (strategy.currentBankroll * (strategy.stopProfitPercentage / 100)).toFixed(2) %></p>
+          <div style="font-size:11px;color:var(--color-muted);margin-bottom:3px">Stop-profit target</div>
+          <div class="td-num td-num--green" style="font-weight:600;font-size:14px">₹<%= (strategy.currentBankroll * (strategy.stopProfitPercentage / 100)).toFixed(2) %></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Stake Recommendation -->
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-      <span>🎯</span> Recommended Stake
-    </h3>
-    
-    <% if (recommendation.shouldStop) { %>
-      <div class="text-center py-8">
-        <p class="text-3xl mb-4">⛔</p>
-        <p class="text-red-400 font-bold text-lg"><%= recommendation.message %></p>
-        <div class="mt-4 text-left space-y-2">
+  <%# Stake Recommendation %>
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">Recommended stake</span>
+    </div>
+    <div class="card-body">
+      <% if (recommendation.shouldStop) { %>
+        <div style="text-align:center;padding:var(--space-lg) 0">
+          <div style="font-size:36px;margin-bottom:var(--space-md)">⛔</div>
+          <div style="font-weight:600;color:var(--color-red);font-size:15px;margin-bottom:var(--space-md)"><%= recommendation.message %></div>
+          <div style="text-align:left;background:var(--color-paper-3);border-radius:var(--radius-card);padding:var(--space-md)">
+            <% recommendation.reasoning.forEach(reason => { %>
+              <div style="font-size:13px;color:var(--color-ink-2);margin-bottom:4px"><%= reason %></div>
+            <% }) %>
+          </div>
+        </div>
+      <% } else { %>
+        <div style="text-align:center;margin-bottom:var(--space-md)">
+          <div style="font-family:var(--font-display);font-weight:600;font-size:40px;letter-spacing:var(--tracking-display);color:var(--color-accent);line-height:1;margin-bottom:6px">
+            ₹<%= recommendation.recommended %>
+          </div>
+          <div style="font-size:13px;color:var(--color-muted)"><%= recommendation.message %></div>
+          <div style="display:flex;justify-content:center;gap:var(--space-md);margin-top:var(--space-sm);font-size:12px;color:var(--color-muted)">
+            <span>Min: ₹<%= recommendation.min %></span>
+            <span>Max: ₹<%= recommendation.max %></span>
+          </div>
+        </div>
+        <div style="background:var(--color-paper-3);border-radius:var(--radius-card);padding:var(--space-md)">
+          <div style="font-size:11px;font-weight:500;color:var(--color-muted);margin-bottom:6px">ANALYSIS</div>
           <% recommendation.reasoning.forEach(reason => { %>
-            <p class="text-sm text-gray-400"><%= reason %></p>
+            <div style="font-size:13px;color:var(--color-ink-2);margin-bottom:4px"><%= reason %></div>
           <% }) %>
         </div>
-      </div>
-    <% } else { %>
-      <div class="text-center mb-6">
-        <p class="text-5xl font-bold text-blue-400 mb-2">₹<%= recommendation.recommended %></p>
-        <p class="text-sm text-gray-400"><%= recommendation.message %></p>
-        <div class="flex justify-center gap-4 mt-4 text-xs">
-          <span class="text-gray-500">Min: ₹<%= recommendation.min %></span>
-          <span class="text-gray-500">Max: ₹<%= recommendation.max %></span>
+        <div style="margin-top:var(--space-sm);font-size:11.5px;color:var(--color-muted)">
+          <div>Kelly %: <%= recommendation.kellyInfo.recommendedKelly.toFixed(2) %>% of bankroll</div>
+          <div>Max daily stake: ₹<%= strategy.dailyMaxStake.toFixed(2) %> (<%= strategy.riskLevel %>)</div>
         </div>
-      </div>
-      <div class="space-y-2 bg-gray-800/50 rounded-xl p-4">
-        <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Analysis</p>
-        <% recommendation.reasoning.forEach(reason => { %>
-          <p class="text-sm text-gray-300"><%= reason %></p>
-        <% }) %>
-      </div>
-      <div class="mt-4 text-xs text-gray-500">
-        <p>Kelly %: <%= recommendation.kellyInfo.recommendedKelly.toFixed(2) %>% of bankroll</p>
-        <p>Max Daily Stake: ₹<%= strategy.dailyMaxStake.toFixed(2) %> (<%= strategy.riskLevel %>)</p>
-      </div>
-    <% } %>
+      <% } %>
+    </div>
   </div>
 </div>
 
-<!-- Progress Tracking -->
-<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
-  <h3 class="text-lg font-semibold text-white mb-4">📈 90-Day Progress</h3>
-  <div class="h-64">
-    <canvas id="progressChart"></canvas>
+<%# Progress Tracking %>
+<div class="card mb-6">
+  <div class="card-head">
+    <span class="card-title">90-day progress</span>
+  </div>
+  <div class="card-body">
+    <div class="chart-wrap h-64"><canvas id="progressChart"></canvas></div>
   </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="flex flex-wrap gap-3">
-  <a href="/bets/new" class="flex-1 min-w-[200px] bg-blue-600 hover:bg-blue-700 text-white text-center py-4 rounded-xl font-semibold transition-colors">
-    ➕ Place New Bet
-  </a>
-  <a href="/bets" class="flex-1 min-w-[200px] bg-gray-800 hover:bg-gray-700 text-white text-center py-4 rounded-xl font-semibold transition-colors">
-    📋 View All Bets
-  </a>
+<%# Quick Actions %>
+<div style="display:flex;gap:var(--space-sm);flex-wrap:wrap">
+  <a href="/bets/new" class="btn btn--primary" style="flex:1;min-width:200px;justify-content:center">Place new bet</a>
+  <a href="/bets" class="btn" style="flex:1;min-width:200px;justify-content:center">View all bets</a>
 </div>
 
-<!-- Chart Script -->
+<%# Chart Script %>
 <script>
+  const INK = getComputedStyle(document.documentElement).getPropertyValue('--color-muted').trim();
+  const ACCENT = 'oklch(70% 0.19 40)';
+  const GREEN = 'oklch(48% 0.11 150)';
+  const RED = 'oklch(44% 0.18 22)';
+  const GRID = 'oklch(90% 0.014 85)';
+
   const projections = <%- projections %>;
   const recentBets = <%- recentBets %>;
 
@@ -158,20 +172,22 @@
         {
           label: 'Target Projection',
           data: projections.map(p => p.amount),
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59,130,246,0.1)',
-          borderDash: [5, 5],
+          borderColor: ACCENT,
+          backgroundColor: 'oklch(70% 0.19 40 / 0.08)',
+          borderDash: [4, 4],
           tension: 0.4,
           pointRadius: 0,
+          fill: false,
         },
         {
           label: 'Actual Performance',
           data: actualData,
-          borderColor: '<%= strategy.currentBankroll >= strategy.initialBankroll ? "#16a34a" : "#dc2626" %>',
-          backgroundColor: '<%= strategy.currentBankroll >= strategy.initialBankroll ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)" %>',
+          borderColor: '<%= strategy.currentBankroll >= strategy.initialBankroll ? GREEN : RED %>',
+          backgroundColor: '<%= strategy.currentBankroll >= strategy.initialBankroll ? "oklch(48% 0.11 150 / 0.1)" : "oklch(44% 0.18 22 / 0.1)" %>',
           tension: 0.4,
           pointRadius: 3,
-          pointBackgroundColor: '<%= strategy.currentBankroll >= strategy.initialBankroll ? "#16a34a" : "#dc2626" %>',
+          pointBackgroundColor: '<%= strategy.currentBankroll >= strategy.initialBankroll ? GREEN : RED %>',
+          fill: true,
         },
       ],
     },
@@ -179,13 +195,13 @@
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { labels: { color: '#9ca3af', font: { size: 11 } } },
+        legend: { labels: { color: '#8a7f72', font: { size: 11, family: "'Red Hat Text', sans-serif" } } },
       },
       scales: {
-        x: { ticks: { color: '#6b7280' }, grid: { color: '#1f2937' } },
+        x: { ticks: { color: '#8a7f72', font: { size: 11 } }, grid: { color: GRID } },
         y: {
-          ticks: { color: '#6b7280', callback: (v) => '₹' + v.toFixed(0) },
-          grid: { color: '#1f2937' },
+          ticks: { color: '#8a7f72', callback: (v) => '₹' + v.toFixed(0), font: { size: 11 } },
+          grid: { color: GRID },
         },
       },
     },

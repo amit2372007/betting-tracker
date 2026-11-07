@@ -1,157 +1,152 @@
-<!-- All Bets View -->
+<%# All Bets — Furrow theme %>
 
-<!-- Toolbar -->
-<div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-6">
-  <div class="flex items-center gap-2">
-    <h2 class="text-lg font-semibold text-white">All Bets</h2>
-    <span class="bg-blue-600/20 text-blue-400 text-xs px-2 py-1 rounded-full font-medium"><%= totalBets %> records</span>
+<%# ── Toolbar ── %>
+<div class="toolbar mb-6">
+  <div class="toolbar-left">
+    <span class="section-title">All bets</span>
+    <span class="record-count"><%= totalBets %> records</span>
   </div>
-  <div class="flex gap-2">
-    <a href="/bets/export/csv" class="flex items-center gap-1 bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg text-xs font-medium transition-colors">
-      📄 CSV
-    </a>
-    <a href="/bets/export/pdf" class="flex items-center gap-1 bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg text-xs font-medium transition-colors">
-      📑 PDF
-    </a>
-    <a href="/bets/new" class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-600/30">
-      ➕ Add Bet
-    </a>
+  <div class="toolbar-right">
+    <a href="/bets/export/csv" class="btn btn--sm">CSV</a>
+    <a href="/bets/export/pdf" class="btn btn--sm">PDF</a>
+    <a href="/bets/new" class="btn btn--primary btn--sm">+ Add bet</a>
   </div>
 </div>
 
-<!-- Filters -->
-<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-6">
-  <form method="GET" action="/bets" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-    <div class="lg:col-span-1">
-      <input type="text" name="search" placeholder="🔍 Search..." value="<%= filters.search || '' %>"
-        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500" />
-    </div>
-    <div>
-      <input type="date" name="startDate" value="<%= filters.startDate || '' %>"
-        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors" />
-    </div>
-    <div>
-      <input type="date" name="endDate" value="<%= filters.endDate || '' %>"
-        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors" />
-    </div>
-    <div>
-      <select name="platform" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors">
-        <option value="all">All Platforms</option>
-        <% platforms.forEach(p => { %>
-          <option value="<%= p %>" <%= filters.platform === p ? 'selected' : '' %>><%= p %></option>
-        <% }) %>
-      </select>
-    </div>
-    <div>
-      <select name="result" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors">
-        <option value="all">All Results</option>
-        <option value="Win" <%= filters.result === 'Win' ? 'selected' : '' %>>Win</option>
-        <option value="Loss" <%= filters.result === 'Loss' ? 'selected' : '' %>>Loss</option>
-        <option value="Pending" <%= filters.result === 'Pending' ? 'selected' : '' %>>Pending</option>
-        <option value="Void" <%= filters.result === 'Void' ? 'selected' : '' %>>Void</option>
-        <option value="Half Win" <%= filters.result === 'Half Win' ? 'selected' : '' %>>Half Win</option>
-        <option value="Half Loss" <%= filters.result === 'Half Loss' ? 'selected' : '' %>>Half Loss</option>
-      </select>
-    </div>
-    <div class="flex gap-2">
-      <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">Filter</button>
-      <a href="/bets" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">✕</a>
-    </div>
-  </form>
-</div>
-
-<!-- Mini Stats Bar -->
-<div class="grid grid-cols-4 gap-3 mb-6">
-  <div class="bg-blue-950/30 border border-blue-800/30 rounded-xl p-3 text-center">
-    <div class="text-blue-400 font-bold"><%= stats.totalBets %></div>
-    <div class="text-xs text-gray-500">Bets</div>
-  </div>
-  <div class="bg-green-950/30 border border-green-800/30 rounded-xl p-3 text-center">
-    <div class="text-green-400 font-bold"><%= stats.winRate %>%</div>
-    <div class="text-xs text-gray-500">Win Rate</div>
-  </div>
-  <div class="<%= stats.totalProfitLoss >= 0 ? 'bg-green-950/30 border-green-800/30' : 'bg-red-950/30 border-red-800/30' %> border rounded-xl p-3 text-center">
-    <div class="<%= stats.totalProfitLoss >= 0 ? 'text-green-400' : 'text-red-400' %> font-bold">
-      <%= stats.totalProfitLoss >= 0 ? '+' : '' %>₹<%= stats.totalProfitLoss.toFixed(2) %>
-    </div>
-    <div class="text-xs text-gray-500">P&L</div>
-  </div>
-  <div class="<%= parseFloat(stats.roi) >= 0 ? 'bg-green-950/30 border-green-800/30' : 'bg-red-950/30 border-red-800/30' %> border rounded-xl p-3 text-center">
-    <div class="<%= parseFloat(stats.roi) >= 0 ? 'text-green-400' : 'text-red-400' %> font-bold"><%= stats.roi %>%</div>
-    <div class="text-xs text-gray-500">ROI</div>
+<%# ── Filters ── %>
+<div class="card mb-6">
+  <div class="card-body">
+    <form method="GET" action="/bets">
+      <div class="filter-bar">
+        <div class="field">
+          <label for="f-search">Search</label>
+          <input id="f-search" type="text" name="search" class="input" placeholder="Event, selection…" value="<%= filters.search || '' %>" />
+        </div>
+        <div class="field">
+          <label for="f-start">From</label>
+          <input id="f-start" type="date" name="startDate" class="input" value="<%= filters.startDate || '' %>" />
+        </div>
+        <div class="field">
+          <label for="f-end">To</label>
+          <input id="f-end" type="date" name="endDate" class="input" value="<%= filters.endDate || '' %>" />
+        </div>
+        <div class="field">
+          <label for="f-platform">Platform</label>
+          <select id="f-platform" name="platform" class="input">
+            <option value="all">All platforms</option>
+            <% platforms.forEach(p => { %>
+              <option value="<%= p %>" <%= filters.platform === p ? 'selected' : '' %>><%= p %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-result">Result</label>
+          <select id="f-result" name="result" class="input">
+            <option value="all">All results</option>
+            <option value="Win"       <%= filters.result === 'Win'       ? 'selected' : '' %>>Win</option>
+            <option value="Loss"      <%= filters.result === 'Loss'      ? 'selected' : '' %>>Loss</option>
+            <option value="Pending"   <%= filters.result === 'Pending'   ? 'selected' : '' %>>Pending</option>
+            <option value="Void"      <%= filters.result === 'Void'      ? 'selected' : '' %>>Void</option>
+            <option value="Half Win"  <%= filters.result === 'Half Win'  ? 'selected' : '' %>>Half win</option>
+            <option value="Half Loss" <%= filters.result === 'Half Loss' ? 'selected' : '' %>>Half loss</option>
+          </select>
+        </div>
+        <div class="field" style="flex-direction:row;align-items:flex-end;gap:8px">
+          <button type="submit" class="btn btn--primary">Filter</button>
+          <a href="/bets" class="btn">Clear</a>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 
-<!-- Bets Table -->
-<div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+<%# ── Mini stats bar ── %>
+<div class="grid-4 mb-6">
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">Bets</div>
+    <div class="stat-card-value" style="font-size:22px"><%= stats.totalBets %></div>
+  </div>
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">Win rate</div>
+    <div class="stat-card-value <%= parseFloat(stats.winRate) >= 50 ? 'stat-card-value--green' : 'stat-card-value--red' %>" style="font-size:22px">
+      <span class="td-num"><%= stats.winRate %>%</span>
+    </div>
+  </div>
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">P&amp;L</div>
+    <div class="stat-card-value <%= stats.totalProfitLoss >= 0 ? 'stat-card-value--green' : 'stat-card-value--red' %>" style="font-size:22px">
+      <span class="td-num"><%= stats.totalProfitLoss >= 0 ? '+' : '' %>₹<%= stats.totalProfitLoss.toFixed(2) %></span>
+    </div>
+  </div>
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">ROI</div>
+    <div class="stat-card-value <%= parseFloat(stats.roi) >= 0 ? 'stat-card-value--green' : 'stat-card-value--red' %>" style="font-size:22px">
+      <span class="td-num"><%= stats.roi %>%</span>
+    </div>
+  </div>
+</div>
+
+<%# ── Bets table ── %>
+<div class="card">
   <% if (bets.length === 0) { %>
-    <div class="text-center py-16 text-gray-500">
-      <div class="text-5xl mb-4">🎲</div>
-      <p class="text-lg font-medium text-gray-400">No bets found</p>
-      <p class="text-sm mt-1">Try adjusting your filters or <a href="/bets/new" class="text-blue-400 hover:text-blue-300">add a new bet</a></p>
+    <div class="empty-state">
+      <div class="empty-state-icon">📋</div>
+      <div class="empty-state-title">No bets found</div>
+      <p>Try adjusting your filters or <a href="/bets/new">add a new bet</a></p>
     </div>
   <% } else { %>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="bg-gray-800/50">
-          <tr class="text-gray-400 text-left">
-            <th class="px-4 py-4 font-medium">Date</th>
-            <th class="px-4 py-4 font-medium">Event</th>
-            <th class="px-4 py-4 font-medium hidden sm:table-cell">Type</th>
-            <th class="px-4 py-4 font-medium hidden md:table-cell">Platform</th>
-            <th class="px-4 py-4 font-medium text-right hidden lg:table-cell">Odds</th>
-            <th class="px-4 py-4 font-medium text-right">Stake</th>
-            <th class="px-4 py-4 font-medium text-center">Result</th>
-            <th class="px-4 py-4 font-medium text-right">P&L</th>
-            <th class="px-4 py-4 font-medium text-center">Actions</th>
+    <div class="ruled-table-wrap">
+      <table class="ruled-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Event</th>
+            <th class="hidden-sm">Type</th>
+            <th class="hidden-md">Platform</th>
+            <th class="text-right hidden-lg">Odds</th>
+            <th class="text-right">Stake</th>
+            <th class="text-center">Result</th>
+            <th class="text-right">P&amp;L</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-800">
+        <tbody>
           <% bets.forEach(bet => { %>
-            <tr class="hover:bg-gray-800/40 transition-colors group">
-              <td class="px-4 py-3.5 text-gray-400 text-xs whitespace-nowrap">
+            <tr>
+              <td class="td-num" style="white-space:nowrap;font-size:12px;color:var(--color-muted)">
                 <%= moment(bet.date).format('DD MMM YY') %>
               </td>
-              <td class="px-4 py-3.5">
-                <div class="font-medium text-white">
-                  <%= bet.event.length > 35 ? bet.event.substring(0, 35) + '...' : bet.event %>
+              <td>
+                <div class="td-event">
+                  <%= bet.event.length > 36 ? bet.event.substring(0, 36) + '…' : bet.event %>
                 </div>
                 <% if (bet.selection) { %>
-                  <div class="text-xs text-gray-500 mt-0.5"><%= bet.selection %></div>
+                  <div class="td-sub"><%= bet.selection %></div>
                 <% } %>
               </td>
-              <td class="px-4 py-3.5 hidden sm:table-cell">
-                <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-md text-xs"><%= bet.betType %></span>
-              </td>
-              <td class="px-4 py-3.5 text-gray-400 text-xs hidden md:table-cell"><%= bet.platform %></td>
-              <td class="px-4 py-3.5 text-right text-gray-300 hidden lg:table-cell"><%= bet.odds.toFixed(2) %></td>
-              <td class="px-4 py-3.5 text-right text-gray-300 font-medium">₹<%= bet.stake.toFixed(2) %></td>
-              <td class="px-4 py-3.5 text-center">
-                <span class="px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap
-                  <%= bet.result === 'Win' ? 'bg-green-900/60 text-green-400' :
-                     bet.result === 'Loss' ? 'bg-red-900/60 text-red-400' :
-                     bet.result === 'Pending' ? 'bg-yellow-900/60 text-yellow-400' :
-                     bet.result === 'Half Win' ? 'bg-emerald-900/60 text-emerald-400' :
-                     bet.result === 'Half Loss' ? 'bg-orange-900/60 text-orange-400' :
-                     'bg-gray-800 text-gray-400' %>">
+              <td class="hidden-sm"><span class="type-chip"><%= bet.betType %></span></td>
+              <td class="hidden-md" style="font-size:12px;color:var(--color-muted)"><%= bet.platform %></td>
+              <td class="text-right td-num hidden-lg"><%= bet.odds.toFixed(2) %></td>
+              <td class="text-right td-num">₹<%= bet.stake.toFixed(2) %></td>
+              <td class="text-center">
+                <span class="result-chip result-chip--<%= bet.result.toLowerCase().replace(/ /g,'') %>">
                   <%= bet.result %>
                 </span>
               </td>
-              <td class="px-4 py-3.5 text-right font-semibold whitespace-nowrap
-                <%= bet.profitLoss >= 0 ? 'text-green-400' : 'text-red-400' %>">
+              <td class="text-right td-num <%= bet.profitLoss >= 0 ? 'td-num--green' : 'td-num--red' %>">
                 <%= bet.profitLoss >= 0 ? '+' : '' %>₹<%= bet.profitLoss.toFixed(2) %>
               </td>
-              <td class="px-4 py-3.5 text-center">
-                <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <a href="/bets/<%= bet._id %>" class="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-900/30 rounded-lg transition-colors" title="View">
-                    👁
+              <td class="text-center">
+                <div class="action-icons">
+                  <a href="/bets/<%= bet._id %>" class="action-btn" title="View">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
                   </a>
-                  <a href="/bets/<%= bet._id %>/edit" class="p-1.5 text-gray-400 hover:text-yellow-400 hover:bg-yellow-900/30 rounded-lg transition-colors" title="Edit">
-                    ✏️
+                  <a href="/bets/<%= bet._id %>/edit" class="action-btn" title="Edit">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-2.207 2.207L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
                   </a>
                   <form method="POST" action="/bets/<%= bet._id %>?_method=DELETE" onsubmit="return confirm('Delete this bet?')">
-                    <button type="submit" class="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors" title="Delete">
-                      🗑
+                    <button type="submit" class="action-btn action-btn--danger" title="Delete">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                     </button>
                   </form>
                 </div>
@@ -162,31 +157,34 @@
       </table>
     </div>
 
-    <!-- Pagination -->
+    <%# Pagination %>
     <% if (totalPages > 1) { %>
-      <div class="flex items-center justify-between px-4 py-4 border-t border-gray-800">
-        <p class="text-xs text-gray-400">
-          Page <%= currentPage %> of <%= totalPages %> • <%= totalBets %> total bets
-        </p>
-        <div class="flex gap-1">
+      <div class="pagination">
+        <p class="pagination-info">Page <%= currentPage %> of <%= totalPages %> — <%= totalBets %> bets</p>
+        <div class="pagination-links">
           <% if (currentPage > 1) { %>
             <a href="?page=<%= currentPage - 1 %>&search=<%= filters.search || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>&platform=<%= filters.platform || 'all' %>&result=<%= filters.result || 'all' %>"
-              class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs transition-colors">← Prev</a>
+               class="pagination-link">←</a>
           <% } %>
-
           <% for (let p = Math.max(1, currentPage - 2); p <= Math.min(totalPages, currentPage + 2); p++) { %>
             <a href="?page=<%= p %>&search=<%= filters.search || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>&platform=<%= filters.platform || 'all' %>&result=<%= filters.result || 'all' %>"
-              class="px-3 py-1.5 <%= p === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-800 hover:bg-gray-700 text-gray-300' %> rounded-lg text-xs transition-colors">
-              <%= p %>
-            </a>
+               class="pagination-link <%= p === currentPage ? 'pagination-link--active' : '' %>"><%= p %></a>
           <% } %>
-
           <% if (currentPage < totalPages) { %>
             <a href="?page=<%= currentPage + 1 %>&search=<%= filters.search || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>&platform=<%= filters.platform || 'all' %>&result=<%= filters.result || 'all' %>"
-              class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs transition-colors">Next →</a>
+               class="pagination-link">→</a>
           <% } %>
         </div>
       </div>
     <% } %>
   <% } %>
 </div>
+
+<style>
+.hidden-sm { display: none; }
+.hidden-md { display: none; }
+.hidden-lg { display: none; }
+@media (min-width: 540px)  { .hidden-sm { display: table-cell; } }
+@media (min-width: 768px)  { .hidden-md { display: table-cell; } }
+@media (min-width: 1024px) { .hidden-lg { display: table-cell; } }
+</style>

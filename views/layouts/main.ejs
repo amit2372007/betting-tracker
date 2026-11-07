@@ -1,177 +1,137 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" id="html-root">
+<html lang="en" id="html-root">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= typeof title !== 'undefined' ? title + ' | BetTracker Pro' : 'BetTracker Pro' %></title>
+  <title><%= typeof title !== 'undefined' ? title + ' | BetTracker' : 'BetTracker' %></title>
 
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
-              300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
-              600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
-            },
-            profit: '#16a34a',
-            loss: '#dc2626',
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.3s ease-in-out',
-            'slide-up': 'slideUp 0.4s ease-out',
-          },
-          keyframes: {
-            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-          },
-        },
-      },
-    };
-  </script>
+  <!-- Furrow: Red Hat font stack -->
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@600&family=Red+Hat+Text:wght@400;500&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- Custom CSS -->
+  <!-- Custom CSS (Furrow tokens + components) -->
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 
-<body class="bg-gray-950 text-gray-100 min-h-screen font-sans transition-colors duration-300">
+<body>
 
   <!-- Sidebar Overlay (mobile) -->
-  <div class="sidebar-overlay fixed inset-0 bg-black/60 z-20 hidden lg:hidden" id="overlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
   <!-- Sidebar -->
-  <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-900 border-r border-gray-800 z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+  <aside id="sidebar" class="sidebar">
 
-    <!-- Logo -->
-    <div class="p-6 border-b border-gray-800">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-          <span class="text-xl">🎲</span>
-        </div>
-        <div>
-          <h1 class="font-bold text-lg text-white">BetTracker</h1>
-          <p class="text-xs text-gray-400">Pro Analytics</p>
-        </div>
+    <!-- Logo / Wordmark -->
+    <div class="sidebar-wordmark">
+      <div class="wordmark-symbol">B</div>
+      <div>
+        <div class="wordmark-name">BetTracker</div>
+        <div class="wordmark-sub">Field Records</div>
       </div>
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-      <!-- Main Menu -->
-      <a href="/"
-        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath === '/' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
-        <span class="text-lg">📊</span>
-        <span class="truncate">Dashboard</span>
+    <nav class="sidebar-nav">
+
+      <a href="/" class="sidebar-link <%= currentPath === '/' ? 'sidebar-link--active' : '' %>">
+        <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"/></svg>
+        Dashboard
       </a>
 
-      <a href="/bets"
-        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath.startsWith('/bets') && currentPath !== '/bets/new' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
-        <span class="text-lg">📋</span>
-        <span class="truncate">All Bets</span>
+      <a href="/bets" class="sidebar-link <%= currentPath.startsWith('/bets') && currentPath !== '/bets/new' ? 'sidebar-link--active' : '' %>">
+        <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm8 8v2h1v1H4v-1h1v-2a1 1 0 011-1h8a1 1 0 011 1z" clip-rule="evenodd"/></svg>
+        All Bets
       </a>
 
-      <a href="/bets/new"
-        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath === '/bets/new' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
-        <span class="text-lg">➕</span>
-        <span class="truncate">Add New Bet</span>
+      <a href="/bets/new" class="sidebar-link <%= currentPath === '/bets/new' ? 'sidebar-link--active' : '' %>">
+        <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+        Add Bet
       </a>
 
-      <!-- NEW: Strategy Section -->
-      <div class="pt-4 border-t border-gray-800 mt-4">
-        <p class="text-xs text-gray-500 uppercase tracking-wider px-4 mb-2">Management</p>
-        <a href="/strategy"
-          class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath.startsWith('/strategy') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
-          <span class="text-lg">💰</span>
-          <span class="truncate">Strategy</span>
-        </a>
-        <a href="/finance"
-          class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 <%= currentPath.startsWith('/finance') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-400 hover:bg-gray-800 hover:text-white' %>">
-          <span class="text-lg">💳</span>
-          <span class="truncate">Finance</span>
-        </a>
+      <div class="sidebar-divider">
+        <span class="sidebar-section-label">Management</span>
       </div>
 
-      <!-- Export -->
-      <div class="pt-4 border-t border-gray-800 mt-4">
-        <p class="text-xs text-gray-500 uppercase tracking-wider px-4 mb-2">Export</p>
-        <a href="/bets/export/csv"
-          class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200">
-          <span class="text-lg">📄</span>
-          <span class="truncate">Export CSV</span>
-        </a>
-        <a href="/bets/export/pdf"
-          class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200">
-          <span class="text-lg">📑</span>
-          <span class="truncate">Export PDF</span>
-        </a>
+      <a href="/strategy" class="sidebar-link <%= currentPath.startsWith('/strategy') ? 'sidebar-link--active' : '' %>">
+        <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        Strategy
+      </a>
+
+      <a href="/finance" class="sidebar-link <%= currentPath.startsWith('/finance') ? 'sidebar-link--active' : '' %>">
+        <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+        Finance
+      </a>
+
+      <div class="sidebar-divider">
+        <span class="sidebar-section-label">Export</span>
       </div>
+
+      <a href="/bets/export/csv" class="sidebar-link">
+        <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        Export CSV
+      </a>
+
+      <a href="/bets/export/pdf" class="sidebar-link">
+        <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+        Export PDF
+      </a>
     </nav>
 
-    <!-- Footer -->
-    <div class="p-4 border-t border-gray-800">
-      <p class="text-xs text-gray-500 text-center">BetTracker Pro v1.0</p>
+    <div class="sidebar-footer">
+      BetTracker v1.0
     </div>
   </aside>
 
   <!-- Main Content -->
-  <div class="lg:ml-64 min-h-screen flex flex-col">
+  <div class="main-wrap">
 
     <!-- Top Navbar -->
-    <header class="sticky top-0 z-10 bg-gray-950/95 backdrop-blur border-b border-gray-800 px-6 py-4">
-      <div class="flex items-center justify-between">
+    <header class="topbar">
+      <div class="topbar-inner">
         <!-- Mobile menu button -->
-        <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white transition-colors">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        <button onclick="toggleSidebar()" class="topbar-menu-btn" aria-label="Toggle menu">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" d="M3 5h14M3 10h14M3 15h14"/>
           </svg>
         </button>
 
-        <div class="hidden lg:block">
-          <h2 class="text-xl font-semibold text-white"><%= typeof title !== 'undefined' ? title : 'Dashboard' %></h2>
+        <div class="topbar-title">
+          <%= typeof title !== 'undefined' ? title : 'Dashboard' %>
         </div>
 
-        <div class="flex items-center gap-3 ml-auto">
-          <!-- Add Bet Quick Button -->
-          <a href="/bets/new"
-            class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50">
-            <span>+</span>
-            <span class="hidden sm:inline">Add Bet</span>
-          </a>
-        </div>
+        <a href="/bets/new" class="btn btn--primary topbar-cta">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+          <span>Add Bet</span>
+        </a>
       </div>
     </header>
 
     <!-- Flash Messages -->
     <% if (success_msg && success_msg.length > 0) { %>
-      <div class="mx-6 mt-4 bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-xl flex items-center gap-2 animate-fade-in" id="flash-success">
-        <span class="text-lg">✅</span>
+      <div class="flash flash--success" id="flash-success">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
         <span><%= success_msg %></span>
-        <button onclick="this.parentElement.remove()" class="ml-auto text-green-400 hover:text-green-200">✕</button>
+        <button onclick="this.parentElement.remove()" class="flash-close" aria-label="Dismiss">✕</button>
       </div>
     <% } %>
     <% if (error_msg && error_msg.length > 0) { %>
-      <div class="mx-6 mt-4 bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-xl flex items-center gap-2 animate-fade-in" id="flash-error">
-        <span class="text-lg">❌</span>
+      <div class="flash flash--error" id="flash-error">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
         <span><%= error_msg %></span>
-        <button onclick="this.parentElement.remove()" class="ml-auto text-red-400 hover:text-red-200">✕</button>
+        <button onclick="this.parentElement.remove()" class="flash-close" aria-label="Dismiss">✕</button>
       </div>
     <% } %>
 
     <!-- Page Content -->
-    <main class="flex-1 p-6 animate-slide-up">
+    <main class="page-content">
       <%- body %>
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-gray-800 px-6 py-4 text-center text-xs text-gray-500">
-      &copy; <%= new Date().getFullYear() %> BetTracker Pro — Track Smart, Bet Smarter
+    <footer class="page-footer">
+      &copy; <%= new Date().getFullYear() %> BetTracker — Track smart, bet smarter
     </footer>
   </div>
 
@@ -182,16 +142,20 @@
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('overlay');
-      sidebar.classList.toggle('-translate-x-full');
-      overlay.classList.toggle('hidden');
+      sidebar.classList.toggle('sidebar--open');
+      overlay.classList.toggle('overlay--visible');
     }
 
     // Auto-dismiss flash messages after 4 seconds
     setTimeout(() => {
       const flashSuccess = document.getElementById('flash-success');
       const flashError = document.getElementById('flash-error');
-      if (flashSuccess) flashSuccess.remove();
-      if (flashError) flashError.remove();
+      if (flashSuccess) flashSuccess.style.opacity = '0';
+      if (flashError) flashError.style.opacity = '0';
+      setTimeout(() => {
+        if (flashSuccess) flashSuccess.remove();
+        if (flashError) flashError.remove();
+      }, 300);
     }, 4000);
   </script>
 </body>

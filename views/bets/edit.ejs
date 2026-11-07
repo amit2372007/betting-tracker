@@ -1,46 +1,38 @@
-<!-- Edit Bet Form -->
+<%# Edit Bet — Furrow theme %>
 
-<div class="max-w-3xl mx-auto">
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 md:p-8">
+<a href="/bets/<%= bet._id %>" class="back-link">← Back to bet</a>
 
-    <div class="flex items-center justify-between mb-8">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-yellow-600/20 rounded-xl flex items-center justify-center">
-          <span class="text-xl">✏️</span>
-        </div>
-        <div>
-          <h2 class="text-xl font-bold text-white">Edit Bet</h2>
-          <p class="text-sm text-gray-400 truncate max-w-xs"><%= bet.event %></p>
-        </div>
-      </div>
-      <a href="/bets" class="text-gray-400 hover:text-white transition-colors text-sm">← Back</a>
-    </div>
+<%# Error Messages %>
+<% if (errors.length > 0) { %>
+  <div class="error-list">
+    <div class="error-list-title">Please fix the following errors:</div>
+    <ul>
+      <% errors.forEach(err => { %>
+        <li><%= err.msg %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
 
-    <!-- Error Messages -->
-    <% if (errors.length > 0) { %>
-      <div class="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
-        <p class="text-red-400 font-medium text-sm mb-2">⚠️ Please fix the following errors:</p>
-        <ul class="space-y-1">
-          <% errors.forEach(err => { %>
-            <li class="text-red-300 text-sm">• <%= err.msg %></li>
-          <% }) %>
-        </ul>
-      </div>
-    <% } %>
+<%# Form card %>
+<div class="card">
+  <div class="card-head">
+    <span class="card-title">Edit bet: <%= bet.event %></span>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="/bets/<%= bet._id %>?_method=PUT">
 
-    <form method="POST" action="/bets/<%= bet._id %>?_method=PUT" class="space-y-6">
-
-      <!-- Row 1: Date & Bet Type -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">📅 Date <span class="text-red-400">*</span></label>
-          <input type="date" name="date" value="<%= new Date(bet.date).toISOString().split('T')[0] %>"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required />
+      <%# Row 1: Date & Bet Type %>
+      <div class="grid-2 mb-4">
+        <div class="field">
+          <label for="f-date">Date <span class="required">*</span></label>
+          <input id="f-date" type="date" name="date" class="input"
+            value="<%= new Date(bet.date).toISOString().split('T')[0] %>" required />
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">🎯 Bet Type <span class="text-red-400">*</span></label>
-          <select name="betType" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required>
+        <div class="field">
+          <label for="f-type">Bet type <span class="required">*</span></label>
+          <select id="f-type" name="betType" class="input" required>
             <% ['Sports','Casino','Poker','Horse Racing','Football','Basketball','Tennis','Cricket','Boxing','UFC/MMA','eSports','Other'].forEach(type => { %>
               <option value="<%= type %>" <%= bet.betType === type ? 'selected' : '' %>><%= type %></option>
             <% }) %>
@@ -48,94 +40,88 @@
         </div>
       </div>
 
-      <!-- Row 2: Event & Selection -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">🏟️ Event <span class="text-red-400">*</span></label>
-          <input type="text" name="event" value="<%= bet.event %>"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required />
+      <%# Row 2: Event & Selection %>
+      <div class="grid-2 mb-4">
+        <div class="field">
+          <label for="f-event">Event <span class="required">*</span></label>
+          <input id="f-event" type="text" name="event" class="input" value="<%= bet.event %>" required />
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">🎯 Your Selection</label>
-          <input type="text" name="selection" value="<%= bet.selection || '' %>"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500" />
+        <div class="field">
+          <label for="f-selection">Your selection</label>
+          <input id="f-selection" type="text" name="selection" class="input" value="<%= bet.selection || '' %>" />
         </div>
       </div>
 
-      <!-- Row 3: Platform, Odds, Stake -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">🏣 Platform <span class="text-red-400">*</span></label>
-          <select name="platform" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required>
+      <%# Row 3: Platform, Odds, Stake %>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--space-md);margin-bottom:var(--space-md)">
+        <div class="field">
+          <label for="f-platform">Platform <span class="required">*</span></label>
+          <select id="f-platform" name="platform" class="input" required>
             <% ['Betway','Bet365','Dream11','MPL','My11Circle','FanCode','Parimatch','RummyCircle','Other'].forEach(p => { %>
               <option value="<%= p %>" <%= bet.platform === p ? 'selected' : '' %>><%= p %></option>
             <% }) %>
           </select>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">📊 Odds <span class="text-red-400">*</span></label>
-          <input type="number" name="odds" value="<%= bet.odds %>" step="0.01" min="1"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required />
+        <div class="field">
+          <label for="f-odds">Odds <span class="required">*</span></label>
+          <input id="f-odds" type="number" name="odds" class="input input--num"
+            value="<%= bet.odds %>" step="0.01" min="1" required />
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">💰 Stake (₹) <span class="text-red-400">*</span></label>
-          <input type="number" name="stake" value="<%= bet.stake %>" step="0.01" min="0.01"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required />
+        <div class="field">
+          <label for="f-stake">Stake (₹) <span class="required">*</span></label>
+          <input id="f-stake" type="number" name="stake" class="input input--num"
+            value="<%= bet.stake %>" step="0.01" min="0.01" required />
         </div>
       </div>
 
-      <!-- Result -->
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-3">🏆 Result <span class="text-red-400">*</span></label>
-        <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+      <%# Result selection %>
+      <div class="field mb-4">
+        <label>Result <span class="required">*</span></label>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px">
           <% [
-            { value: 'Pending', emoji: '⏳' },
-            { value: 'Win', emoji: '✅' },
-            { value: 'Loss', emoji: '❌' },
-            { value: 'Half Win', emoji: '🟩' },
-            { value: 'Half Loss', emoji: '🟥' },
-            { value: 'Void', emoji: '⭕' },
+            { value: 'Pending', icon: '⏳' },
+            { value: 'Win', icon: '✅' },
+            { value: 'Loss', icon: '❌' },
+            { value: 'Half Win', icon: '🟩' },
+            { value: 'Half Loss', icon: '🟥' },
+            { value: 'Void', icon: '⭕' },
           ].forEach(r => { %>
-            <label class="cursor-pointer">
-              <input type="radio" name="result" value="<%= r.value %>" <%= bet.result === r.value ? 'checked' : '' %> class="sr-only peer" />
-              <div class="peer-checked:border-blue-500 peer-checked:bg-blue-600/20 border-2 border-gray-700 rounded-xl p-3 text-center hover:border-gray-500 transition-all duration-200">
-                <div class="text-xl mb-1"><%= r.emoji %></div>
-                <div class="text-xs font-medium text-gray-300"><%= r.value %></div>
+            <label class="result-option">
+              <input type="radio" name="result" value="<%= r.value %>" <%= bet.result === r.value ? 'checked' : '' %> />
+              <div class="result-option-card">
+                <div class="result-option-icon"><%= r.icon %></div>
+                <div class="result-option-label"><%= r.value %></div>
               </div>
             </label>
           <% }) %>
         </div>
       </div>
 
-      <!-- Notes & Tags -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">📝 Notes</label>
-          <textarea name="notes" rows="3"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors resize-none"><%= bet.notes || '' %></textarea>
+      <hr class="form-rule" />
+
+      <%# Notes & Tags %>
+      <div class="grid-2 mb-4">
+        <div class="field">
+          <label for="f-notes">Notes</label>
+          <textarea id="f-notes" name="notes" class="input" rows="3"><%= bet.notes || '' %></textarea>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">🏷️ Tags</label>
-          <input type="text" name="tags" value="<%= Array.isArray(bet.tags) ? bet.tags.join(', ') : '' %>"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" />
+        <div class="field">
+          <label for="f-tags">Tags (comma-separated)</label>
+          <input id="f-tags" type="text" name="tags" class="input"
+            value="<%= Array.isArray(bet.tags) ? bet.tags.join(', ') : '' %>" />
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex gap-3 pt-4 border-t border-gray-800">
-        <button type="submit" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-yellow-600/20">
-          Update Bet ✏️
-        </button>
-        <a href="/bets/<%= bet._id %>" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-xl transition-colors">
-          Cancel
-        </a>
-        <form method="POST" action="/bets/<%= bet._id %>?_method=DELETE" onsubmit="return confirm('Are you sure you want to delete this bet?')">
-          <button type="submit" class="px-6 py-3 bg-red-900/50 hover:bg-red-900 border border-red-700 text-red-400 font-medium rounded-xl transition-colors">
-            🗑 Delete
-          </button>
+      <%# Action Buttons %>
+      <div style="display:flex;gap:var(--space-sm);padding-top:var(--space-md);border-top:var(--rule-hair)">
+        <button type="submit" class="btn btn--primary" style="flex:1">Update bet</button>
+        <a href="/bets/<%= bet._id %>" class="btn">Cancel</a>
+        <form method="POST" action="/bets/<%= bet._id %>?_method=DELETE" style="display:inline"
+          onsubmit="return confirm('Are you sure you want to delete this bet?')">
+          <button type="submit" class="btn btn--danger">Delete</button>
         </form>
       </div>
     </form>

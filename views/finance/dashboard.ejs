@@ -1,151 +1,142 @@
-<div class="bg-gradient-to-br from-emerald-900/50 to-teal-900/30 border border-emerald-800/50 rounded-3xl p-8 mb-8">
-  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-    <div class="flex-1">
-      <p class="text-sm text-gray-400 mb-2">💎 Total Net Worth</p>
-      <h1 class="text-5xl md:text-6xl font-bold text-white mb-3">₹<%= netWorth.toFixed(2) %></h1>
-      <p class="text-sm text-gray-400">Finance Balance + Betting Profits</p>
-    </div>
-    <div class="grid grid-cols-2 gap-4">
-      <div class="text-center bg-gray-800/50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-1">Finance</p>
-        <p class="text-2xl font-bold text-<%= summary.netBalance >= 0 ? 'green' : 'red' %>-400">
-          <%= summary.netBalance >= 0 ? '+' : '' %>₹<%= summary.netBalance.toFixed(0) %>
-        </p>
-      </div>
-      <div class="text-center bg-gray-800/50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-1">Betting</p>
-        <p class="text-2xl font-bold text-<%= bettingStats.totalProfitLoss >= 0 ? 'green' : 'red' %>-400">
-          <%= bettingStats.totalProfitLoss >= 0 ? '+' : '' %>₹<%= bettingStats.totalProfitLoss.toFixed(0) %>
-        </p>
+<%# Finance Dashboard — Furrow theme %>
+
+<%# Net Worth Banner %>
+<div class="net-worth-banner mb-6">
+  <div style="flex:1">
+    <div class="net-worth-label">Total net worth</div>
+    <div class="net-worth-value">₹<%= netWorth.toFixed(2) %></div>
+    <div class="net-worth-sub">Finance balance + Betting profits</div>
+  </div>
+  <div class="net-worth-meta">
+    <div class="net-worth-meta-item">
+      <div class="meta-label">Finance</div>
+      <div class="meta-val <%= summary.netBalance >= 0 ? 'td-num--green' : 'td-num--red' %>">
+        <%= summary.netBalance >= 0 ? '+' : '' %>₹<%= summary.netBalance.toFixed(0) %>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Summary Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-  <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-    <div class="flex items-center justify-between mb-3">
-      <span class="text-2xl">💵</span>
-      <span class="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">Income</span>
-    </div>
-    <div class="text-3xl font-bold text-green-400 mb-1">₹<%= summary.totalIncome.toFixed(0) %></div>
-    <div class="text-sm text-gray-400">Total Income</div>
-  </div>
-
-  <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-    <div class="flex items-center justify-between mb-3">
-      <span class="text-2xl">💸</span>
-      <span class="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">Expense</span>
-    </div>
-    <div class="text-3xl font-bold text-red-400 mb-1">₹<%= summary.totalExpenses.toFixed(0) %></div>
-    <div class="text-sm text-gray-400">Total Expenses</div>
-  </div>
-
-  <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-    <div class="flex items-center justify-between mb-3">
-      <span class="text-2xl">⚠️</span>
-      <span class="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">Liability</span>
-    </div>
-    <div class="text-3xl font-bold text-orange-400 mb-1">₹<%= summary.totalLiabilities.toFixed(0) %></div>
-    <div class="text-sm text-gray-400">Total Liabilities</div>
-  </div>
-
-  <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-    <div class="flex items-center justify-between mb-3">
-      <span class="text-2xl">📊</span>
-      <span class="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">Balance</span>
-    </div>
-    <div class="text-3xl font-bold text-<%= summary.netBalance >= 0 ? 'green' : 'red' %>-400 mb-1">
-      <%= summary.netBalance >= 0 ? '+' : '' %>₹<%= summary.netBalance.toFixed(0) %>
-    </div>
-    <div class="text-sm text-gray-400">Net Balance</div>
-  </div>
-</div>
-
-<!-- Charts Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-  
-  <!-- Monthly Cash Flow -->
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 lg:col-span-2">
-    <h3 class="font-semibold text-white mb-4">📈 Monthly Cash Flow (Last 12 Months)</h3>
-    <div class="h-64">
-      <canvas id="cashFlowChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Expense Breakdown -->
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-    <h3 class="font-semibold text-white mb-4">🥧 Expense Breakdown</h3>
-    <div class="h-56">
-      <canvas id="expenseChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Income Breakdown -->
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-    <h3 class="font-semibold text-white mb-4">💰 Income Sources</h3>
-    <div class="h-56">
-      <canvas id="incomeChart"></canvas>
+    <div class="net-worth-meta-item">
+      <div class="meta-label">Betting</div>
+      <div class="meta-val <%= bettingStats.totalProfitLoss >= 0 ? 'td-num--green' : 'td-num--red' %>">
+        <%= bettingStats.totalProfitLoss >= 0 ? '+' : '' %>₹<%= bettingStats.totalProfitLoss.toFixed(0) %>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Recent Transactions -->
-<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-6">
-  <div class="flex items-center justify-between mb-4">
-    <h3 class="font-semibold text-white">🕐 Recent Transactions</h3>
-    <a href="/finance/transactions" class="text-blue-400 hover:text-blue-300 text-sm">View All →</a>
+<%# Summary Cards %>
+<div class="grid-4 mb-6">
+  <div class="stat-card">
+    <div class="stat-card-label">Total income</div>
+    <div class="stat-card-value stat-card-value--green" style="font-size:26px">
+      <span class="td-num">₹<%= summary.totalIncome.toFixed(0) %></span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-card-label">Total expenses</div>
+    <div class="stat-card-value stat-card-value--red" style="font-size:26px">
+      <span class="td-num">₹<%= summary.totalExpenses.toFixed(0) %></span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-card-label">Total liabilities</div>
+    <div class="stat-card-value" style="font-size:26px;color:var(--color-yellow)">
+      <span class="td-num">₹<%= summary.totalLiabilities.toFixed(0) %></span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-card-label">Net balance</div>
+    <div class="stat-card-value <%= summary.netBalance >= 0 ? 'stat-card-value--green' : 'stat-card-value--red' %>" style="font-size:26px">
+      <span class="td-num"><%= summary.netBalance >= 0 ? '+' : '' %>₹<%= summary.netBalance.toFixed(0) %></span>
+    </div>
+  </div>
+</div>
+
+<%# Charts Grid %>
+<div class="grid-charts mb-6">
+
+  <%# Monthly Cash Flow %>
+  <div class="card col-span-2">
+    <div class="card-head">
+      <span class="card-title">Monthly cash flow — last 12 months</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrap h-64"><canvas id="cashFlowChart"></canvas></div>
+    </div>
+  </div>
+
+  <%# Expense Breakdown %>
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">Expense breakdown</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrap h-56"><canvas id="expenseChart"></canvas></div>
+    </div>
+  </div>
+
+  <%# Income Breakdown %>
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">Income sources</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrap h-56"><canvas id="incomeChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<%# Recent Transactions %>
+<div class="card mb-6">
+  <div class="card-head">
+    <span class="card-title">Recent transactions</span>
+    <a href="/finance/transactions" class="btn btn--sm">View all</a>
   </div>
 
   <% if (recentTransactions.length === 0) { %>
-    <div class="text-center py-10 text-gray-500">
-      <p>No transactions recorded yet.</p>
-      <a href="/finance/add" class="text-blue-400 hover:text-blue-300 text-sm mt-2 inline-block">Add your first transaction →</a>
+    <div class="empty-state">
+      <div class="empty-state-icon">💰</div>
+      <div class="empty-state-title">No transactions yet</div>
+      <p><a href="/finance/add">Add your first transaction</a></p>
     </div>
   <% } else { %>
-    <div class="space-y-3">
+    <div style="padding:var(--space-sm) 0">
       <% recentTransactions.forEach(txn => { %>
-        <div class="flex items-center justify-between p-4 bg-gray-800/40 rounded-xl hover:bg-gray-800/60 transition-colors">
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center
-              <%= txn.type === 'income' ? 'bg-green-900/40 text-green-400' :
-                  txn.type === 'expense' ? 'bg-red-900/40 text-red-400' :
-                  'bg-orange-900/40 text-orange-400' %>">
-              <%= txn.type === 'income' ? '↓' : txn.type === 'expense' ? '↑' : '⚠' %>
-            </div>
-            <div>
-              <p class="font-medium text-white"><%= txn.category %></p>
-              <p class="text-sm text-gray-400"><%= moment(txn.date).format('DD MMM YYYY') %> • <%= txn.description || 'No description' %></p>
-            </div>
+        <div class="txn-item">
+          <div class="txn-icon txn-icon--<%= txn.type %>">
+            <%= txn.type === 'income' ? '↓' : txn.type === 'expense' ? '↑' : '⚠' %>
           </div>
-          <p class="text-lg font-semibold
-            <%= txn.type === 'income' ? 'text-green-400' :
-                txn.type === 'expense' ? 'text-red-400' :
-                'text-orange-400' %>">
+          <div class="txn-info">
+            <div class="txn-category"><%= txn.category %></div>
+            <div class="txn-date"><%= moment(txn.date).format('DD MMM YYYY') %> • <%= txn.description || 'No description' %></div>
+          </div>
+          <div class="txn-amount txn-amount--<%= txn.type %>">
             <%= txn.type === 'income' ? '+' : '-' %>₹<%= txn.amount.toFixed(2) %>
-          </p>
+          </div>
         </div>
       <% }) %>
     </div>
   <% } %>
 </div>
 
-<!-- Quick Actions -->
-<div class="flex flex-wrap gap-3">
-  <a href="/finance/add" class="flex-1 min-w-[200px] bg-blue-600 hover:bg-blue-700 text-white text-center py-4 rounded-xl font-semibold transition-colors">
-    ➕ Add Transaction
-  </a>
-  <a href="/finance/transactions" class="flex-1 min-w-[200px] bg-gray-800 hover:bg-gray-700 text-white text-center py-4 rounded-xl font-semibold transition-colors">
-    📋 View All
-  </a>
-  <a href="/finance/export/csv" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-4 rounded-xl font-semibold transition-colors">
-    📄 Export CSV
-  </a>
+<%# Quick Actions %>
+<div style="display:flex;gap:var(--space-sm);flex-wrap:wrap">
+  <a href="/finance/add" class="btn btn--primary" style="flex:1;min-width:200px;justify-content:center">Add transaction</a>
+  <a href="/finance/transactions" class="btn" style="flex:1;min-width:200px;justify-content:center">View all</a>
+  <a href="/finance/export/csv" class="btn" style="min-width:140px;justify-content:center">Export CSV</a>
 </div>
 
-<!-- Chart Scripts -->
+<%# Chart Scripts %>
 <script>
+  const INK = getComputedStyle(document.documentElement).getPropertyValue('--color-muted').trim();
+  const GREEN = 'oklch(48% 0.11 150)';
+  const RED = 'oklch(44% 0.18 22)';
+  const ACCENT = 'oklch(70% 0.19 40)';
+  const GRID = 'oklch(90% 0.014 85)';
+  const PAPER = 'oklch(96% 0.011 85)';
+
   const cashFlowData = <%- cashFlow %>;
   const expenseBreakdown = <%- expenseBreakdown %>;
   const incomeBreakdown = <%- incomeBreakdown %>;
@@ -159,38 +150,43 @@
         {
           label: 'Income (₹)',
           data: cashFlowData.map(d => d.income),
-          backgroundColor: 'rgba(34,197,94,0.7)',
-          borderColor: '#22c55e',
+          backgroundColor: 'oklch(48% 0.11 150 / 0.7)',
+          borderColor: GREEN,
           borderWidth: 1,
+          borderRadius: 4,
         },
         {
           label: 'Expenses (₹)',
           data: cashFlowData.map(d => d.expense),
-          backgroundColor: 'rgba(239,68,68,0.7)',
-          borderColor: '#ef4444',
+          backgroundColor: 'oklch(44% 0.18 22 / 0.7)',
+          borderColor: RED,
           borderWidth: 1,
+          borderRadius: 4,
         },
         {
           label: 'Net (₹)',
           data: cashFlowData.map(d => d.net),
           type: 'line',
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59,130,246,0.1)',
+          borderColor: ACCENT,
+          backgroundColor: 'oklch(70% 0.19 40 / 0.1)',
           borderWidth: 2,
           tension: 0.4,
+          fill: true,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } },
+      plugins: { legend: { labels: { color: '#8a7f72', font: { size: 11, family: "'Red Hat Text', sans-serif" } } } },
       scales: {
-        x: { ticks: { color: '#6b7280' }, grid: { color: 'transparent' } },
-        y: { ticks: { color: '#6b7280', callback: v => '₹' + v }, grid: { color: '#1f2937' } },
+        x: { ticks: { color: '#8a7f72', font: { size: 11 } }, grid: { color: 'transparent' } },
+        y: { ticks: { color: '#8a7f72', callback: v => '₹' + v, font: { size: 11 } }, grid: { color: GRID } },
       },
     },
   });
+
+  const pieColors = [ACCENT, GREEN, RED, '#8b7355', '#6b8e6b', '#9e7b56', '#5c8a8a', '#7a6e5a', '#a07050', '#6e8070'];
 
   // Expense Pie
   new Chart(document.getElementById('expenseChart'), {
@@ -199,16 +195,16 @@
       labels: expenseBreakdown.map(d => d.category),
       datasets: [{
         data: expenseBreakdown.map(d => d.total),
-        backgroundColor: ['#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#10b981','#14b8a6','#06b6d4','#0ea5e9'],
-        borderColor: '#111827',
+        backgroundColor: pieColors.slice(0, expenseBreakdown.length),
+        borderColor: PAPER,
         borderWidth: 2,
       }],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#9ca3af', font: { size: 10 } } } },
-      cutout: '60%',
+      plugins: { legend: { labels: { color: '#8a7f72', font: { size: 10, family: "'Red Hat Text', sans-serif" } } } },
+      cutout: '62%',
     },
   });
 
@@ -219,16 +215,16 @@
       labels: incomeBreakdown.map(d => d.category),
       datasets: [{
         data: incomeBreakdown.map(d => d.total),
-        backgroundColor: ['#22c55e','#10b981','#14b8a6','#06b6d4','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7','#d946ef'],
-        borderColor: '#111827',
+        backgroundColor: pieColors.slice(0, incomeBreakdown.length),
+        borderColor: PAPER,
         borderWidth: 2,
       }],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#9ca3af', font: { size: 10 } } } },
-      cutout: '60%',
+      plugins: { legend: { labels: { color: '#8a7f72', font: { size: 10, family: "'Red Hat Text', sans-serif" } } } },
+      cutout: '62%',
     },
   });
 </script>

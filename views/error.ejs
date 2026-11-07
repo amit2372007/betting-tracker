@@ -1,17 +1,17 @@
-<!-- Error View -->
+<%# Error Page — Furrow theme %>
 
-<div class="flex items-center justify-center min-h-[60vh]">
-  <div class="text-center">
-    <div class="text-8xl mb-6">😵</div>
-    <h1 class="text-4xl font-bold text-white mb-4">Oops!</h1>
-    <p class="text-gray-400 mb-8 max-w-md mx-auto"><%= typeof message !== 'undefined' ? message : 'Something went wrong. Please try again.' %></p>
-    <div class="flex gap-3 justify-center">
-      <a href="/" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
-        🏠 Go Home
-      </a>
-      <button onclick="history.back()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-6 py-3 rounded-xl font-medium transition-colors">
-        ← Go Back
-      </button>
+<div class="empty-state" style="min-height:60vh;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center;max-width:500px">
+    <div class="empty-state-icon" style="font-size:80px;margin-bottom:var(--space-lg)">😵</div>
+    <h1 style="font-family:var(--font-display);font-weight:600;font-size:32px;letter-spacing:var(--tracking-display);color:var(--color-ink);margin-bottom:var(--space-md)">
+      Oops!
+    </h1>
+    <p style="color:var(--color-muted);font-size:15px;line-height:1.6;margin-bottom:var(--space-xl)">
+      <%= typeof message !== 'undefined' ? message : 'Something went wrong. Please try again.' %>
+    </p>
+    <div style="display:flex;gap:var(--space-sm);justify-content:center;flex-wrap:wrap">
+      <a href="/" class="btn btn--primary">Go home</a>
+      <button onclick="history.back()" class="btn">Go back</button>
     </div>
   </div>
 </div>

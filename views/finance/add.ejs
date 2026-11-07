@@ -1,81 +1,68 @@
+<%# Add Transaction — Furrow theme %>
 
-<div class="max-w-3xl mx-auto">
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 md:p-8">
+<a href="/finance/transactions" class="back-link">← All transactions</a>
 
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center">
-        <span class="text-xl">➕</span>
-      </div>
-      <div>
-        <h2 class="text-xl font-bold text-white">Add Transaction</h2>
-        <p class="text-sm text-gray-400">Record income, expense, or liability</p>
-      </div>
-    </div>
+<%# Error Messages %>
+<% if (errors.length > 0) { %>
+  <div class="error-list">
+    <div class="error-list-title">Please fix the following errors:</div>
+    <ul>
+      <% errors.forEach(err => { %>
+        <li><%= err.msg %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
 
-    <% if (errors.length > 0) { %>
-      <div class="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
-        <p class="text-red-400 font-medium text-sm mb-2">⚠️ Please fix the following errors:</p>
-        <ul class="space-y-1">
-          <% errors.forEach(err => { %>
-            <li class="text-red-300 text-sm">• <%= err.msg %></li>
-          <% }) %>
-        </ul>
-      </div>
-    <% } %>
+<%# Form card %>
+<div class="card">
+  <div class="card-head">
+    <span class="card-title">Add transaction</span>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="/finance/transactions">
 
-    <form method="POST" action="/finance/transactions" class="space-y-6">
-
-      <!-- Transaction Type -->
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-3">
-          📁 Transaction Type <span class="text-red-400">*</span>
-        </label>
-        <div class="grid grid-cols-3 gap-3">
+      <%# Transaction Type %>
+      <div class="field mb-4">
+        <label>Transaction type <span class="required">*</span></label>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:var(--space-sm)">
           <% [
-            { value: 'income', emoji: '💵', color: 'green' },
-            { value: 'expense', emoji: '💸', color: 'red' },
-            { value: 'liability', emoji: '⚠️', color: 'orange' },
+            { value: 'income', icon: '💵', label: 'Income' },
+            { value: 'expense', icon: '💸', label: 'Expense' },
+            { value: 'liability', icon: '⚠️', label: 'Liability' },
           ].forEach(type => { %>
-            <label class="cursor-pointer">
-              <input type="radio" name="type" value="<%= type.value %>" 
-                <%= transaction.type === type.value ? 'checked' : '' %>
-                class="sr-only peer" required />
-              <div class="peer-checked:border-blue-500 peer-checked:bg-blue-600/20 border-2 border-gray-700 rounded-xl p-4 text-center hover:border-gray-500 transition-all">
-                <div class="text-3xl mb-2"><%= type.emoji %></div>
-                <div class="text-sm font-medium text-white capitalize"><%= type.value %></div>
+            <label class="result-option">
+              <input type="radio" name="type" value="<%= type.value %>"
+                <%= transaction.type === type.value ? 'checked' : '' %> required />
+              <div class="result-option-card">
+                <div class="result-option-icon" style="font-size:24px"><%= type.icon %></div>
+                <div class="result-option-label"><%= type.label %></div>
               </div>
             </label>
           <% }) %>
         </div>
       </div>
 
-      <!-- Date & Amount -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">
-            📅 Date <span class="text-red-400">*</span>
-          </label>
-          <input type="date" name="date" value="<%= transaction.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required />
+      <%# Date & Amount %>
+      <div class="grid-2 mb-4">
+        <div class="field">
+          <label for="f-date">Date <span class="required">*</span></label>
+          <input id="f-date" type="date" name="date" class="input"
+            value="<%= transaction.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>" required />
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">
-            💰 Amount (₹) <span class="text-red-400">*</span>
-          </label>
-          <input type="number" name="amount" value="<%= transaction.amount || '' %>" 
-            placeholder="e.g., 5000" step="0.01" min="0.01"
-            class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required />
+        <div class="field">
+          <label for="f-amount">Amount (₹) <span class="required">*</span></label>
+          <input id="f-amount" type="number" name="amount" class="input input--num"
+            value="<%= transaction.amount || '' %>" placeholder="e.g., 5000"
+            step="0.01" min="0.01" required />
         </div>
       </div>
 
-      <!-- Category -->
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">
-          🏷️ Category <span class="text-red-400">*</span>
-        </label>
-        <select name="category" 
-          class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" required>
+      <%# Category %>
+      <div class="field mb-4">
+        <label for="f-category">Category <span class="required">*</span></label>
+        <select id="f-category" name="category" class="input" required>
           <option value="">Select category...</option>
           <% Object.keys(categories).forEach(type => { %>
             <optgroup label="<%= type.charAt(0).toUpperCase() + type.slice(1) %>">
@@ -87,42 +74,40 @@
         </select>
       </div>
 
-      <!-- Description -->
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">📝 Description</label>
-        <textarea name="description" rows="3" placeholder="Add details about this transaction..."
-          class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500 resize-none"><%= transaction.description || '' %></textarea>
+      <%# Description %>
+      <div class="field mb-4">
+        <label for="f-desc">Description</label>
+        <textarea id="f-desc" name="description" class="input" rows="3"
+          placeholder="Add details about this transaction..."><%= transaction.description || '' %></textarea>
       </div>
 
-      <!-- Recurring Type -->
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">🔄 Recurring Type</label>
-        <select name="recurringType" 
-          class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
-          <option value="One-time" <%= !transaction.recurringType || transaction.recurringType === 'One-time' ? 'selected' : '' %>>One-time</option>
-          <option value="Daily" <%= transaction.recurringType === 'Daily' ? 'selected' : '' %>>Daily</option>
-          <option value="Weekly" <%= transaction.recurringType === 'Weekly' ? 'selected' : '' %>>Weekly</option>
-          <option value="Monthly" <%= transaction.recurringType === 'Monthly' ? 'selected' : '' %>>Monthly</option>
-          <option value="Yearly" <%= transaction.recurringType === 'Yearly' ? 'selected' : '' %>>Yearly</option>
-        </select>
+      <hr class="form-rule" />
+
+      <%# Recurring Type & Tags %>
+      <div class="grid-2 mb-4">
+        <div class="field">
+          <label for="f-recurring">Recurring type</label>
+          <select id="f-recurring" name="recurringType" class="input">
+            <option value="One-time" <%= !transaction.recurringType || transaction.recurringType === 'One-time' ? 'selected' : '' %>>One-time</option>
+            <option value="Daily" <%= transaction.recurringType === 'Daily' ? 'selected' : '' %>>Daily</option>
+            <option value="Weekly" <%= transaction.recurringType === 'Weekly' ? 'selected' : '' %>>Weekly</option>
+            <option value="Monthly" <%= transaction.recurringType === 'Monthly' ? 'selected' : '' %>>Monthly</option>
+            <option value="Yearly" <%= transaction.recurringType === 'Yearly' ? 'selected' : '' %>>Yearly</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-tags">Tags (comma-separated)</label>
+          <input id="f-tags" type="text" name="tags" class="input"
+            value="<%= Array.isArray(transaction.tags) ? transaction.tags.join(', ') : (transaction.tags || '') %>"
+            placeholder="e.g., business, tax-deductible" />
+        </div>
       </div>
 
-      <!-- Tags -->
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">🏷️ Tags (comma-separated)</label>
-        <input type="text" name="tags" value="<%= Array.isArray(transaction.tags) ? transaction.tags.join(', ') : (transaction.tags || '') %>" 
-          placeholder="e.g., business, tax-deductible, urgent..."
-          class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder-gray-500" />
-      </div>
-
-      <!-- Submit Buttons -->
-      <div class="flex gap-3 pt-4 border-t border-gray-800">
-        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-blue-600/30">
-          Save Transaction 💾
-        </button>
-        <a href="/finance/transactions" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-xl transition-colors">
-          Cancel
-        </a>
+      <%# Submit Buttons %>
+      <div style="display:flex;gap:var(--space-sm);padding-top:var(--space-md);border-top:var(--rule-hair)">
+        <button type="submit" class="btn btn--primary" style="flex:1">Save transaction</button>
+        <a href="/finance/transactions" class="btn">Cancel</a>
       </div>
     </form>
   </div>

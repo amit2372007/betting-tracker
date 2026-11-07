@@ -1,135 +1,145 @@
-<div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-6">
-  <div class="flex items-center gap-2">
-    <h2 class="text-lg font-semibold text-white">All Transactions</h2>
-    <span class="bg-blue-600/20 text-blue-400 text-xs px-2 py-1 rounded-full font-medium"><%= totalTransactions %> records</span>
+<%# All Transactions — Furrow theme %>
+
+<%# Toolbar %>
+<div class="toolbar mb-6">
+  <div class="toolbar-left">
+    <span class="section-title">All transactions</span>
+    <span class="record-count"><%= totalTransactions %> records</span>
   </div>
-  <div class="flex gap-2">
-    <a href="/finance/export/csv" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg text-xs font-medium transition-colors">
-      📄 CSV
-    </a>
-    <a href="/finance/add" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-600/30">
-      ➕ Add Transaction
-    </a>
+  <div class="toolbar-right">
+    <a href="/finance/export/csv" class="btn btn--sm">CSV</a>
+    <a href="/finance/add" class="btn btn--primary btn--sm">+ Add transaction</a>
   </div>
 </div>
 
-<!-- Filters -->
-<div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-6">
-  <form method="GET" action="/finance/transactions" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-    <div class="lg:col-span-1">
-      <input type="text" name="search" placeholder="🔍 Search..." value="<%= filters.search || '' %>"
-        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500" />
-    </div>
-    <div>
-      <select name="type" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors">
-        <option value="all">All Types</option>
-        <option value="income" <%= filters.type === 'income' ? 'selected' : '' %>>Income</option>
-        <option value="expense" <%= filters.type === 'expense' ? 'selected' : '' %>>Expense</option>
-        <option value="liability" <%= filters.type === 'liability' ? 'selected' : '' %>>Liability</option>
-      </select>
-    </div>
-    <div>
-      <select name="category" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors">
-        <option value="all">All Categories</option>
-        <% Object.keys(categories).forEach(type => { %>
-          <optgroup label="<%= type.charAt(0).toUpperCase() + type.slice(1) %>">
-            <% categories[type].forEach(cat => { %>
-              <option value="<%= cat %>" <%= filters.category === cat ? 'selected' : '' %>><%= cat %></option>
+<%# Filters %>
+<div class="card mb-6">
+  <div class="card-body">
+    <form method="GET" action="/finance/transactions">
+      <div class="filter-bar">
+        <div class="field">
+          <label for="f-search">Search</label>
+          <input id="f-search" type="text" name="search" class="input" placeholder="Search..." value="<%= filters.search || '' %>" />
+        </div>
+        <div class="field">
+          <label for="f-type">Type</label>
+          <select id="f-type" name="type" class="input">
+            <option value="all">All types</option>
+            <option value="income" <%= filters.type === 'income' ? 'selected' : '' %>>Income</option>
+            <option value="expense" <%= filters.type === 'expense' ? 'selected' : '' %>>Expense</option>
+            <option value="liability" <%= filters.type === 'liability' ? 'selected' : '' %>>Liability</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-category">Category</label>
+          <select id="f-category" name="category" class="input">
+            <option value="all">All categories</option>
+            <% Object.keys(categories).forEach(type => { %>
+              <optgroup label="<%= type.charAt(0).toUpperCase() + type.slice(1) %>">
+                <% categories[type].forEach(cat => { %>
+                  <option value="<%= cat %>" <%= filters.category === cat ? 'selected' : '' %>><%= cat %></option>
+                <% }) %>
+              </optgroup>
             <% }) %>
-          </optgroup>
-        <% }) %>
-      </select>
-    </div>
-    <div>
-      <input type="date" name="startDate" value="<%= filters.startDate || '' %>"
-        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors" />
-    </div>
-    <div>
-      <input type="date" name="endDate" value="<%= filters.endDate || '' %>"
-        class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors" />
-    </div>
-    <div class="flex gap-2">
-      <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">Filter</button>
-      <a href="/finance/transactions" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">✕</a>
-    </div>
-  </form>
-</div>
-
-<!-- Mini Stats Bar -->
-<div class="grid grid-cols-4 gap-3 mb-6">
-  <div class="bg-green-950/30 border border-green-800/30 rounded-xl p-3 text-center">
-    <div class="text-green-400 font-bold text-lg">₹<%= summary.totalIncome.toFixed(0) %></div>
-    <div class="text-xs text-gray-500">Income</div>
-  </div>
-  <div class="bg-red-950/30 border border-red-800/30 rounded-xl p-3 text-center">
-    <div class="text-red-400 font-bold text-lg">₹<%= summary.totalExpenses.toFixed(0) %></div>
-    <div class="text-xs text-gray-500">Expenses</div>
-  </div>
-  <div class="bg-orange-950/30 border border-orange-800/30 rounded-xl p-3 text-center">
-    <div class="text-orange-400 font-bold text-lg">₹<%= summary.totalLiabilities.toFixed(0) %></div>
-    <div class="text-xs text-gray-500">Liabilities</div>
-  </div>
-  <div class="<%= summary.netBalance >= 0 ? 'bg-green-950/30 border-green-800/30' : 'bg-red-950/30 border-red-800/30' %> border rounded-xl p-3 text-center">
-    <div class="<%= summary.netBalance >= 0 ? 'text-green-400' : 'text-red-400' %> font-bold text-lg">
-      <%= summary.netBalance >= 0 ? '+' : '' %>₹<%= summary.netBalance.toFixed(0) %>
-    </div>
-    <div class="text-xs text-gray-500">Net</div>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-start">From</label>
+          <input id="f-start" type="date" name="startDate" class="input" value="<%= filters.startDate || '' %>" />
+        </div>
+        <div class="field">
+          <label for="f-end">To</label>
+          <input id="f-end" type="date" name="endDate" class="input" value="<%= filters.endDate || '' %>" />
+        </div>
+        <div class="field" style="flex-direction:row;align-items:flex-end;gap:8px">
+          <button type="submit" class="btn btn--primary">Filter</button>
+          <a href="/finance/transactions" class="btn">Clear</a>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 
-<!-- Transactions Table -->
-<div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+<%# Mini Stats Bar %>
+<div class="grid-4 mb-6">
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">Income</div>
+    <div class="stat-card-value stat-card-value--green" style="font-size:20px">
+      <span class="td-num">₹<%= summary.totalIncome.toFixed(0) %></span>
+    </div>
+  </div>
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">Expenses</div>
+    <div class="stat-card-value stat-card-value--red" style="font-size:20px">
+      <span class="td-num">₹<%= summary.totalExpenses.toFixed(0) %></span>
+    </div>
+  </div>
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">Liabilities</div>
+    <div class="stat-card-value" style="font-size:20px;color:var(--color-yellow)">
+      <span class="td-num">₹<%= summary.totalLiabilities.toFixed(0) %></span>
+    </div>
+  </div>
+  <div class="stat-card" style="text-align:center">
+    <div class="stat-card-label">Net</div>
+    <div class="stat-card-value <%= summary.netBalance >= 0 ? 'stat-card-value--green' : 'stat-card-value--red' %>" style="font-size:20px">
+      <span class="td-num"><%= summary.netBalance >= 0 ? '+' : '' %>₹<%= summary.netBalance.toFixed(0) %></span>
+    </div>
+  </div>
+</div>
+
+<%# Transactions Table %>
+<div class="card">
   <% if (transactions.length === 0) { %>
-    <div class="text-center py-16 text-gray-500">
-      <p class="text-lg font-medium text-gray-400">No transactions found</p>
-      <p class="text-sm mt-1">Try adjusting your filters or <a href="/finance/add" class="text-blue-400 hover:text-blue-300">add a transaction</a></p>
+    <div class="empty-state">
+      <div class="empty-state-icon">💰</div>
+      <div class="empty-state-title">No transactions found</div>
+      <p>Try adjusting your filters or <a href="/finance/add">add a transaction</a></p>
     </div>
   <% } else { %>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="bg-gray-800/50">
-          <tr class="text-gray-400 text-left">
-            <th class="px-4 py-4 font-medium">Date</th>
-            <th class="px-4 py-4 font-medium">Type</th>
-            <th class="px-4 py-4 font-medium">Category</th>
-            <th class="px-4 py-4 font-medium">Description</th>
-            <th class="px-4 py-4 font-medium text-right">Amount</th>
-            <th class="px-4 py-4 font-medium hidden md:table-cell">Recurring</th>
-            <th class="px-4 py-4 font-medium text-center">Actions</th>
+    <div class="ruled-table-wrap">
+      <table class="ruled-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th class="hidden-sm">Description</th>
+            <th class="text-right">Amount</th>
+            <th class="hidden-md">Recurring</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-800">
+        <tbody>
           <% transactions.forEach(txn => { %>
-            <tr class="hover:bg-gray-800/40 transition-colors group">
-              <td class="px-4 py-3.5 text-gray-400 text-xs whitespace-nowrap">
+            <tr>
+              <td class="td-num" style="white-space:nowrap;font-size:12px;color:var(--color-muted)">
                 <%= moment(txn.date).format('DD MMM YY') %>
               </td>
-              <td class="px-4 py-3.5">
-                <span class="px-2 py-1 rounded-md text-xs font-medium
-                  <%= txn.type === 'income' ? 'bg-green-900/60 text-green-400' :
-                      txn.type === 'expense' ? 'bg-red-900/60 text-red-400' :
-                      'bg-orange-900/60 text-orange-400' %>">
+              <td>
+                <span class="result-chip result-chip--<%= txn.type === 'income' ? 'win' : txn.type === 'expense' ? 'loss' : 'pending' %>">
                   <%= txn.type %>
                 </span>
               </td>
-              <td class="px-4 py-3.5 text-white font-medium"><%= txn.category %></td>
-              <td class="px-4 py-3.5 text-gray-400 text-xs max-w-xs truncate">
-                <%= txn.description || '-' %>
+              <td>
+                <div class="td-event"><%= txn.category %></div>
               </td>
-              <td class="px-4 py-3.5 text-right font-semibold whitespace-nowrap
-                <%= txn.type === 'income' ? 'text-green-400' :
-                    txn.type === 'expense' ? 'text-red-400' :
-                    'text-orange-400' %>">
+              <td class="hidden-sm" style="max-width:200px">
+                <div class="td-sub" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                  <%= txn.description || '-' %>
+                </div>
+              </td>
+              <td class="text-right td-num <%= txn.type === 'income' ? 'td-num--green' : txn.type === 'expense' ? 'td-num--red' : '' %>" style="<%= txn.type === 'liability' ? 'color:var(--color-yellow)' : '' %>">
                 <%= txn.type === 'income' ? '+' : '-' %>₹<%= txn.amount.toFixed(2) %>
               </td>
-              <td class="px-4 py-3.5 text-gray-400 text-xs hidden md:table-cell">
+              <td class="hidden-md" style="font-size:12px;color:var(--color-muted)">
                 <%= txn.recurringType %>
               </td>
-              <td class="px-4 py-3.5 text-center">
-                <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <form method="POST" action="/finance/transactions/<%= txn._id %>?_method=DELETE" onsubmit="return confirm('Delete this transaction?')">
-                    <button type="submit" class="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors" title="Delete">
-                      🗑
+              <td class="text-center">
+                <div class="action-icons">
+                  <form method="POST" action="/finance/transactions/<%= txn._id %>?_method=DELETE" style="display:inline" onsubmit="return confirm('Delete this transaction?')">
+                    <button type="submit" class="action-btn action-btn--danger" title="Delete">
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                     </button>
                   </form>
                 </div>
@@ -140,27 +150,32 @@
       </table>
     </div>
 
-    <!-- Pagination -->
+    <%# Pagination %>
     <% if (totalPages > 1) { %>
-      <div class="flex items-center justify-between px-4 py-4 border-t border-gray-800">
-        <p class="text-xs text-gray-400">Page <%= currentPage %> of <%= totalPages %> • <%= totalTransactions %> total</p>
-        <div class="flex gap-1">
+      <div class="pagination">
+        <p class="pagination-info">Page <%= currentPage %> of <%= totalPages %> — <%= totalTransactions %> transactions</p>
+        <div class="pagination-links">
           <% if (currentPage > 1) { %>
             <a href="?page=<%= currentPage - 1 %>&type=<%= filters.type || 'all' %>&category=<%= filters.category || 'all' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>&search=<%= filters.search || '' %>"
-              class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs transition-colors">← Prev</a>
+               class="pagination-link">←</a>
           <% } %>
           <% for (let p = Math.max(1, currentPage - 2); p <= Math.min(totalPages, currentPage + 2); p++) { %>
             <a href="?page=<%= p %>&type=<%= filters.type || 'all' %>&category=<%= filters.category || 'all' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>&search=<%= filters.search || '' %>"
-              class="px-3 py-1.5 <%= p === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-800 hover:bg-gray-700 text-gray-300' %> rounded-lg text-xs transition-colors">
-              <%= p %>
-            </a>
+               class="pagination-link <%= p === currentPage ? 'pagination-link--active' : '' %>"><%= p %></a>
           <% } %>
           <% if (currentPage < totalPages) { %>
             <a href="?page=<%= currentPage + 1 %>&type=<%= filters.type || 'all' %>&category=<%= filters.category || 'all' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>&search=<%= filters.search || '' %>"
-              class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs transition-colors">Next →</a>
+               class="pagination-link">→</a>
           <% } %>
         </div>
       </div>
     <% } %>
   <% } %>
 </div>
+
+<style>
+.hidden-sm { display: none; }
+.hidden-md { display: none; }
+@media (min-width: 640px)  { .hidden-sm { display: table-cell; } }
+@media (min-width: 900px)  { .hidden-md { display: table-cell; } }
+</style>
