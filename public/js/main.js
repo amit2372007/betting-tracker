@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.toggleSidebar = function () {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
-    if (sidebar) sidebar.classList.toggle('-translate-x-full');
-    if (overlay) overlay.classList.toggle('hidden');
+    if (sidebar) sidebar.classList.toggle('sidebar--open');
+    if (overlay) overlay.classList.toggle('overlay--visible');
   };
 
   // ── Auto remove flash messages ────────────────────────────────────────
@@ -94,9 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('overlay');
-      if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
-        sidebar.classList.add('-translate-x-full');
-        overlay && overlay.classList.add('hidden');
+      if (sidebar && sidebar.classList.contains('sidebar--open')) {
+        sidebar.classList.remove('sidebar--open');
+        overlay && overlay.classList.remove('overlay--visible');
       }
     }
   });
@@ -111,6 +111,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ── Close sidebar on navigation link click (mobile) ─────────────────
+  document.querySelectorAll('.sidebar-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth < 1024) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        if (sidebar) sidebar.classList.remove('sidebar--open');
+        if (overlay) overlay.classList.remove('overlay--visible');
+      }
+    });
+  });
+
+  // ── Close sidebar when clicking overlay ──────────────────────────────
+  const overlay = document.getElementById('overlay');
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) sidebar.classList.remove('sidebar--open');
+      overlay.classList.remove('overlay--visible');
+    });
+  }
+
   console.log('🎲 BetTracker Pro initialized');
 });
 
@@ -121,8 +143,8 @@ window.addEventListener('popstate', () => {
   if (window.innerWidth < 1024) {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
-    if (sidebar) sidebar.classList.add('-translate-x-full');
-    if (overlay) overlay.classList.add('hidden');
+    if (sidebar) sidebar.classList.remove('sidebar--open');
+    if (overlay) overlay.classList.remove('overlay--visible');
   }
 });
 
@@ -133,8 +155,10 @@ window.addEventListener('resize', () => {
   resizeTimeout = setTimeout(() => {
     // Auto-close sidebar on desktop resize
     if (window.innerWidth >= 1024) {
+      const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('overlay');
-      if (overlay) overlay.classList.add('hidden');
+      if (sidebar) sidebar.classList.remove('sidebar--open');
+      if (overlay) overlay.classList.remove('overlay--visible');
     }
   }, 250);
 });
